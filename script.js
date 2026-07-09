@@ -3,19 +3,28 @@
 // --- 1. DEFAULT DATA BACKUP & DATA INITIALIZATION ---
 const SECRET_PASSCODE = "2026";
 const DEFAULT_WISHES = [
-    { name: "Jessica & Michael", attendance: "attending", wishes: "Congratulations Arthur and Evelyn! We are so excited to see you two tie the knot. Wishing you a lifetime of love and happiness!", timestamp: "2026-07-08 14:32:00" },
-    { name: "Uncle David & Aunt Clara", attendance: "attending", wishes: "What a beautiful love story. We still remember when Arthur spoke about meeting Evelyn in the bookstore! So happy to be there to witness your vows.", timestamp: "2026-07-06 09:12:00" },
+    { name: "Jessica & Michael", attendance: "attending", wishes: "Congratulations! We are so excited to see you two tie the knot. Wishing you a lifetime of love and happiness!", timestamp: "2026-07-08 14:32:00" },
+    { name: "Uncle David & Aunt Clara", attendance: "attending", wishes: "What a beautiful love story. So happy to be there to witness your vows.", timestamp: "2026-07-06 09:12:00" },
     { name: "Sophia Martinez", attendance: "attending", wishes: "Sending you both the warmest wishes for the future. May your life together be filled with joy, adventure, and lots of laughter!", timestamp: "2026-07-05 18:45:00" }
 ];
 
 // Initialize database
 function getRSVPs() {
-    const list = localStorage.getItem("wedding_rsvps");
-    return list ? JSON.parse(list) : [];
+    try {
+        const list = localStorage.getItem("wedding_rsvps");
+        return list ? JSON.parse(list) : [];
+    } catch (e) {
+        return [];
+    }
 }
 
 function saveRSVPs(list) {
-    localStorage.setItem("wedding_rsvps", JSON.stringify(list));
+    try {
+        localStorage.setItem("wedding_rsvps", JSON.stringify(list));
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 // Ensure default wishes exist on initial load
@@ -67,7 +76,12 @@ function loadConfigValues() {
     // Envelope Dates and texts
     document.querySelectorAll(".invite-msg").forEach(el => el.textContent = config.cardInviteMsg);
     document.querySelectorAll(".invite-date").forEach(el => el.textContent = config.weddingDateText);
-    document.querySelectorAll(".hero-date").forEach(el => el.textContent = config.weddingDateText.replace(/,/g, ' .').replace(/\s+/g, ' '));
+    document.querySelectorAll(".hero-date").forEach(el => {
+        const d = new Date(config.countdownTarget);
+        el.textContent = isNaN(d)
+            ? config.weddingDateText
+            : `${String(d.getDate()).padStart(2, '0')} . ${String(d.getMonth() + 1).padStart(2, '0')} . ${d.getFullYear()}`;
+    });
     document.querySelectorAll(".marriage-date").forEach(el => el.textContent = `${config.weddingDateText} · ${config.events?.ceremony?.address.split(',').pop().trim()}`);
 
     // RSVP Deadlines
@@ -225,7 +239,8 @@ const envelopeCover = document.getElementById("envelope-cover");
 const mainContent = document.getElementById("main-content");
 const waxSeal = document.getElementById("wax-seal");
 
-waxSeal.addEventListener("click", () => {
+function openEnvelope() {
+    if (envelopeCover.classList.contains("open")) return;
     envelopeCover.classList.add("open");
     initSynthAndPlay();
 
@@ -238,6 +253,14 @@ waxSeal.addEventListener("click", () => {
         startCountdown();
         musicPlayer.play();
     }, 1800);
+}
+
+waxSeal.addEventListener("click", openEnvelope);
+waxSeal.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openEnvelope();
+    }
 });
 
 // --- 5. RESPONSIVE FLOWER PETAL CANVAS ENGINE ---
@@ -471,6 +494,8 @@ function startCountdown() {
     const minutesEl = document.getElementById("minutes");
     const secondsEl = document.getElementById("seconds");
 
+    let intervalId = null;
+
     function update() {
         const targetDate = new Date(config.countdownTarget || "2026-10-10T16:00:00").getTime();
         const now = new Date().getTime();
@@ -478,6 +503,7 @@ function startCountdown() {
 
         if (difference <= 0) {
             document.getElementById("timer").innerHTML = `<h2 class="section-title text-center">We Are Married!</h2><div class="elegant-line-sub"></div>`;
+            if (intervalId) clearInterval(intervalId);
             return;
         }
 
@@ -493,7 +519,7 @@ function startCountdown() {
     }
 
     update();
-    setInterval(update, 1000);
+    intervalId = setInterval(update, 1000);
 }
 
 // --- 8. SCROLL REVEAL TRIGGERS ---
@@ -527,7 +553,7 @@ const galleryPhotos = [
     { url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200&auto=format&fit=crop", caption: "Our Favorite Nature Walks" },
     { url: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1200&auto=format&fit=crop", caption: "Coffee Shop Cozy Talks" },
     { url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop", caption: "Eternity Smiles" },
-    { url: "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=1200&auto=format&fit=crop", caption: "Exploring the Golden Gate Cliffs" },
+    { url: "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=1200&auto=format&fit=crop", caption: "Exploring Together" },
     { url: "https://images.unsplash.com/photo-1482575832494-771f74bf6857?q=80&w=1200&auto=format&fit=crop", caption: "Holding Hands into Tomorrow" }
 ];
 
@@ -648,12 +674,24 @@ function handleRSVPSubmit(event) {
 
     const currentList = getRSVPs();
     currentList.push(newRSVP);
-    saveRSVPs(currentList);
+    const saved = saveRSVPs(currentList);
+
+    // Best-effort delivery off of this guest's device, so the couple actually
+    // receives the RSVP instead of it being stranded in local browser storage.
+    if (config.rsvpWebhookUrl) {
+        fetch(config.rsvpWebhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newRSVP)
+        }).catch(() => { /* non-blocking: RSVP still saved locally either way */ });
+    }
 
     compileWishesWall();
 
     const modalSuccessMsg = document.getElementById("rsvp-success-msg");
-    if (attendanceVal === "attending") {
+    if (!saved) {
+        modalSuccessMsg.textContent = `${nameVal}, we couldn't save your RSVP on this device (your browser may be blocking storage). Please try again or reach out to us directly.`;
+    } else if (attendanceVal === "attending") {
         modalSuccessMsg.textContent = `${nameVal}, your invitation acceptance has been joyfully received. We can't wait to celebrate with you!`;
     } else {
         modalSuccessMsg.textContent = `${nameVal}, thank you for letting us know. You will be missed, but we appreciate your warm thoughts!`;
@@ -671,39 +709,36 @@ function closeRSVPModal() {
 }
 
 // --- 11. CALENDAR GENERATION FOR OUTLOOK/APPLE ---
-function addToCalendar(type) {
-    let title = "";
-    let description = "Please join us to celebrate our wedding!";
-    let location = "";
-    let startDate = "";
-    let endDate = "";
+function escapeICSText(text) {
+    return String(text || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/;/g, "\\;")
+        .replace(/,/g, "\\,")
+        .replace(/\r?\n/g, "\\n");
+}
 
-    if (type === 'ceremony') {
-        const cer = config.events?.ceremony;
-        title = `${config.groomName} and ${config.brideName} - ${cer?.title || "Wedding Ceremony"}`;
-        location = cer?.address || "The Glasshouse Conservatory, San Francisco";
-        startDate = "20261010T160000";
-        endDate = "20261010T170000";
-    } else {
-        const rec = config.events?.reception;
-        title = `${config.groomName} and ${config.brideName} - ${rec?.title || "Grand Reception"}`;
-        location = rec?.address || "The Golden Gate Ballroom, San Francisco";
-        startDate = "20261010T180000";
-        endDate = "20261010T230000";
-    }
+function addToCalendar(type) {
+    const evt = config.events?.[type];
+    if (!evt) return;
+
+    const title = `${config.groomName} and ${config.brideName} - ${evt.title}`;
+    const description = "Please join us to celebrate our wedding!";
+    const location = evt.address;
+    const startDate = evt.startISO.replace(/[-:]/g, "");
+    const endDate = evt.endISO.replace(/[-:]/g, "");
 
     const icsContent = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
         "PRODID:-//Wedding Invitation//NONSGML v1.0//EN",
         "BEGIN:VEVENT",
-        `UID:${type}-20261010-wedding-rsvp`,
+        `UID:${type}-${startDate}-wedding-rsvp`,
         `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").split(".")[0]}Z`,
         `DTSTART:${startDate}`,
         `DTEND:${endDate}`,
-        `SUMMARY:${title}`,
-        `DESCRIPTION:${description}`,
-        `LOCATION:${location}`,
+        `SUMMARY:${escapeICSText(title)}`,
+        `DESCRIPTION:${escapeICSText(description)}`,
+        `LOCATION:${escapeICSText(location)}`,
         "END:VEVENT",
         "END:VCALENDAR"
     ].join("\r\n");
@@ -819,7 +854,21 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-// --- 13. ONLOAD INITIALIZATIONS ---
+// --- 13. KEYBOARD ACCESSIBILITY FOR CLICK-ONLY CONTROLS ---
+function makeKeyboardActivatable(el, handler) {
+    if (!el) return;
+    el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handler(e);
+        }
+    });
+}
+
+makeKeyboardActivatable(document.getElementById("admin-trigger"), promptAdmin);
+makeKeyboardActivatable(document.querySelector(".close-lightbox"), closeLightbox);
+
+// --- 14. ONLOAD INITIALIZATIONS ---
 window.addEventListener("DOMContentLoaded", () => {
     loadConfigFromStorage();   // Restore any saved customizations first
     loadConfigValues();
