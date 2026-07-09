@@ -17,6 +17,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%8D%3C/text%3E%3C/svg%3E">
+    <!-- Open Graph / Social Share Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Maschio & Ann Sweety - Wedding Invitation">
+    <meta property="og:description"
+        content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
+    <meta property="og:image"
+        content="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Maschio & Ann Sweety - Wedding Invitation">
+    <meta name="twitter:description"
+        content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
+    <meta name="twitter:image"
+        content="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop">
     <!-- Configuration -->
     <script src="config.js"></script>
 </head>
@@ -55,7 +71,7 @@
                         <p class="invite-date">September 24, 2026</p>
                     </div>
                 </div>
-                <div class="wax-seal" id="wax-seal">
+                <div class="wax-seal" id="wax-seal" role="button" tabindex="0" aria-label="Open the wedding invitation">
                     <span class="seal-text">M & A</span>
                 </div>
             </div>
@@ -131,9 +147,9 @@
                     <div class="timeline-card">
                         <span class="timeline-date">September 14, 2020</span>
                         <h3>How We Met</h3>
-                        <p>It started with a chance encounter at a local bookstore on a rainy afternoon. Evelyn reached
-                            for the last copy of a classic novel at the same moment Arthur did. An hour of coffee and
-                            conversation later, we knew this was the start of something special.</p>
+                        <p>It started with a chance encounter at a local bookstore on a rainy afternoon. Maschio
+                            reached for the last copy of a classic novel at the same moment Ann Sweety did. An hour of
+                            coffee and conversation later, we knew this was the start of something special.</p>
                     </div>
                 </div>
 
@@ -141,10 +157,10 @@
                     <div class="timeline-badge"><i class="fas fa-coffee"></i></div>
                     <div class="timeline-card">
                         <span class="timeline-date">October 10, 2021</span>
-                        <h3>Our First Anniversary</h3>
-                        <p>Over the course of a year, coffee dates turned into museum strolls, long road trips, and
-                            endless laughter. On this day, we promised to support each other through all of life's
-                            chapters, realizing that our lives were forever intertwined.</p>
+                        <h3>Growing Together</h3>
+                        <p>Over the course of a year, coffee dates turned into long conversations, family visits, and
+                            endless laughter. We promised to support each other through all of life's chapters,
+                            realizing that our lives were forever intertwined.</p>
                     </div>
                 </div>
 
@@ -153,19 +169,19 @@
                     <div class="timeline-card">
                         <span class="timeline-date">May 18, 2024</span>
                         <h3>The Proposal</h3>
-                        <p>Under a canopy of stars and fairy lights at the high-mountain overlook where we took our
-                            first hike, Arthur asked Evelyn to spend the rest of her life with him. Amid tears of joy,
-                            Evelyn said "Yes!"</p>
+                        <p>Under a sky full of stars, Maschio asked Ann Sweety to spend the rest of her life with him.
+                            Amid tears of joy, Ann Sweety said "Yes!"</p>
                     </div>
                 </div>
 
                 <div class="timeline-item right-item">
                     <div class="timeline-badge"><i class="fas fa-church"></i></div>
                     <div class="timeline-card">
-                        <span class="timeline-date">October 10, 2026</span>
+                        <span class="timeline-date">September 24, 2026</span>
                         <h3>The Big Day</h3>
                         <p>And now, we begin our greatest adventure yet: marriage. We cannot wait to celebrate this
-                            monumental day with our dearest family and friends.</p>
+                            monumental day with our dearest family and friends at the Cathedral Church of The
+                            Redemption, New Delhi.</p>
                     </div>
                 </div>
             </div>
@@ -222,30 +238,30 @@
                     <div class="card-border"></div>
                     <div class="event-icon"><i class="fas fa-church"></i></div>
                     <h3>Wedding Ceremony</h3>
-                    <p class="time">Saturday, 4:00 PM - 5:00 PM</p>
-                    <p class="venue">The Glasshouse Conservatory</p>
-                    <p class="address">1200 Arboretum Way, Golden Gate Park, SF</p>
+                    <p class="time">Thursday, 4:00 PM – 5:00 PM</p>
+                    <p class="venue">Cathedral Church of The Redemption</p>
+                    <p class="address">1 Church Road, North Avenue, New Delhi 110001</p>
                     <div class="card-actions">
-                        <a href="https://maps.google.com" target="_blank" class="event-btn"><i
+                        <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="event-btn"><i
                                 class="fas fa-map-location-dot"></i> View Map</a>
                         <button onclick="addToCalendar('ceremony')" class="event-btn btn-secondary"><i
-                                class="fa-regular fa-calendar-plus"></i> Add to Calendar</button>
+                                class="fas fa-calendar-plus"></i> Add to Calendar</button>
                     </div>
                 </div>
 
                 <!-- Reception Card -->
                 <div class="event-card">
                     <div class="card-border"></div>
-                    <div class="event-icon"><i class="fas fa-glass-champagne"></i></div>
+                    <div class="event-icon"><i class="fas fa-champagne-glasses"></i></div>
                     <h3>Grand Reception</h3>
-                    <p class="time">Saturday, 6:00 PM - 11:00 PM</p>
-                    <p class="venue">The Golden Gate Ballroom</p>
-                    <p class="address">800 Terrace Boulevard, San Francisco, CA</p>
+                    <p class="time">Thursday, 7:00 PM – 11:00 PM</p>
+                    <p class="venue">Details to be announced</p>
+                    <p class="address">New Delhi, India</p>
                     <div class="card-actions">
-                        <a href="https://maps.google.com" target="_blank" class="event-btn"><i
+                        <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="event-btn"><i
                                 class="fas fa-map-location-dot"></i> View Map</a>
                         <button onclick="addToCalendar('reception')" class="event-btn btn-secondary"><i
-                                class="fa-regular fa-calendar-plus"></i> Add to Calendar</button>
+                                class="fas fa-calendar-plus"></i> Add to Calendar</button>
                     </div>
                 </div>
             </div>
@@ -356,10 +372,11 @@
         <!-- FOOTER -->
         <footer class="footer">
             <div class="footer-content">
-                <h3 class="couple-names-mini">Arthur & Evelyn</h3>
-                <p class="marriage-date">October 10, 2026 · San Francisco, CA</p>
+                <h3 class="couple-names-mini">Maschio & Ann Sweety</h3>
+                <p class="marriage-date">September 24, 2026 · New Delhi</p>
                 <p class="dev-info">Made with love • <span class="admin-trigger" id="admin-trigger"
-                        onclick="promptAdmin()"><i class="fas fa-lock"></i> Guest List</span></p>
+                        onclick="promptAdmin()" role="button" tabindex="0"
+                        aria-label="Open guest list admin dashboard"><i class="fas fa-lock"></i> Guest List</span></p>
             </div>
         </footer>
 
@@ -367,15 +384,15 @@
 
     <!-- LIGHTBOX FOR GALLERY -->
     <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-        <span class="close-lightbox">&times;</span>
-        <button class="lightbox-nav prev" onclick="event.stopPropagation(); changeLightboxPic(-1)"><i
-                class="fa-solid fa-chevron-left"></i></button>
+        <span class="close-lightbox" role="button" tabindex="0" aria-label="Close photo viewer">&times;</span>
+        <button class="lightbox-nav prev" aria-label="Previous photo"
+            onclick="event.stopPropagation(); changeLightboxPic(-1)"><i class="fa-solid fa-chevron-left"></i></button>
         <div class="lightbox-content-wrapper">
             <img class="lightbox-content" id="lightbox-img" alt="Enlarged photo">
             <div id="lightbox-caption" class="lightbox-caption"></div>
         </div>
-        <button class="lightbox-nav next" onclick="event.stopPropagation(); changeLightboxPic(1)"><i
-                class="fa-solid fa-chevron-right"></i></button>
+        <button class="lightbox-nav next" aria-label="Next photo"
+            onclick="event.stopPropagation(); changeLightboxPic(1)"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 
     <!-- RSVP SUCCESS MODAL -->
@@ -520,6 +537,7 @@
                     Settings (config.js)</button>
                 <p class="customizer-tip">Saves the edited settings to a <code>config.js</code> file. Download and
                     replace your local <code>config.js</code> to keep edits permanent.</p>
+                <button onclick="resetCustomization()" class="export-config-btn" style="margin-top: 0.75rem; background: transparent; border: 1.5px solid var(--gold);"><i class="fas fa-rotate-left"></i> Reset to Defaults</button>
             </div>
         </div>
     </div>
