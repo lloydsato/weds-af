@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maschio &amp; Ann Sweety - Wedding Invitation</title>
+    <meta name="description"
+        content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Configuration -->
+    <script src="config.js"></script>
+</head>
+
+<body>
+
+    <!-- Ambient Falling Petals Canvas -->
+    <canvas id="petals-canvas"></canvas>
+
+    <!-- Music Toggle Button -->
+    <button id="music-toggle" aria-label="Toggle Music" class="music-btn">
+        <div class="waves">
+            <span class="stroke"></span>
+            <span class="stroke"></span>
+            <span class="stroke"></span>
+            <span class="stroke"></span>
+            <span class="stroke"></span>
+        </div>
+        <i class="fas fa-music"></i>
+    </button>
+
+    <!-- ENVELOPE OPENING COVER -->
+    <div id="envelope-cover" class="envelope-container">
+        <div class="envelope-wrapper">
+            <div class="envelope">
+                <div class="flap top-flap"></div>
+                <div class="flap left-flap"></div>
+                <div class="flap right-flap"></div>
+                <div class="flap bottom-flap"></div>
+                <div class="letter">
+                    <div class="letter-content">
+                        <p class="invite-pre">The Wedding of</p>
+                        <h2 class="couple-names-mini">Maschio & Ann Sweety</h2>
+                        <hr class="mini-divider">
+                        <p class="invite-msg">You are cordially invited to share in our joy.</p>
+                        <p class="invite-date">September 24, 2026</p>
+                    </div>
+                </div>
+                <div class="wax-seal" id="wax-seal">
+                    <span class="seal-text">M & A</span>
+                </div>
+            </div>
+            <div class="envelope-hint">Click the gold wax seal to open</div>
+        </div>
+    </div>
+
+    <!-- MAIN SCROLLABLE INVITE CONTENT -->
+    <main id="main-content" class="hidden">
+
+        <!-- HERO SECTION -->
+        <section id="hero" class="hero-section">
+            <div class="decor-corner top-left"></div>
+            <div class="decor-corner top-right"></div>
+            <div class="hero-inner">
+                <p class="celebrate-text">WE ARE CELEBRATING OUR LOVE</p>
+                <h1 class="couple-names">Maschio &amp; Ann Sweety</h1>
+                <div class="hero-parents">
+                    <p class="parent-line">Maschio Silvester &mdash; Son of Late Stanislaus Silvester &amp; Annie
+                        Muscreen</p>
+                    <div class="elegant-line"><span class="diamond"></span></div>
+                    <p class="parent-line">Ann Sweety Saju &mdash; Daughter of Saju K. Kuriakose &amp; Seeba Saju</p>
+                </div>
+                <p class="save-the-date">SAVE THE DATE</p>
+                <p class="hero-date">24 . 09 . 2026</p>
+                <p class="hero-location">Cathedral Church of The Redemption &middot; New Delhi</p>
+                <blockquote class="hero-quote">
+                    <p>&ldquo;Two are better than one; and a threefold cord is not quickly broken.&rdquo;</p>
+                    <cite>Ecclesiastes 4:9, 12</cite>
+                </blockquote>
+            </div>
+            <div class="decor-corner bottom-left"></div>
+            <div class="decor-corner bottom-right"></div>
+            <div class="scroll-indicator">
+                <p>Scroll to Explore</p>
+                <i class="fa-solid fa-chevron-down animate-bounce"></i>
+            </div>
+        </section>
+
+        <!-- COUNTDOWN SECTION -->
+        <section id="timer" class="section-container timer-section">
+            <h2 class="section-title text-center">Counting Down to the Big Day</h2>
+            <div class="elegant-line-sub"></div>
+            <div class="countdown-grid">
+                <div class="countdown-card">
+                    <span id="days" class="time-num">00</span>
+                    <span class="time-label">DAYS</span>
+                </div>
+                <div class="countdown-card">
+                    <span id="hours" class="time-num">00</span>
+                    <span class="time-label">HOURS</span>
+                </div>
+                <div class="countdown-card">
+                    <span id="minutes" class="time-num">00</span>
+                    <span class="time-label">MINUTES</span>
+                </div>
+                <div class="countdown-card">
+                    <span id="seconds" class="time-num">00</span>
+                    <span class="time-label">SECONDS</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- STORY SECTION -->
+        <section id="story" class="section-container story-section">
+            <h2 class="section-title text-center">Our Love Story</h2>
+            <div class="elegant-line-sub"></div>
+            <p class="section-intro">Here is a little glimpse of the journey that brought us here today.</p>
+
+            <div class="timeline">
+                <div class="timeline-item left-item">
+                    <div class="timeline-badge"><i class="fas fa-heart"></i></div>
+                    <div class="timeline-card">
+                        <span class="timeline-date">September 14, 2020</span>
+                        <h3>How We Met</h3>
+                        <p>It started with a chance encounter at a local bookstore on a rainy afternoon. Evelyn reached
+                            for the last copy of a classic novel at the same moment Arthur did. An hour of coffee and
+                            conversation later, we knew this was the start of something special.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item right-item">
+                    <div class="timeline-badge"><i class="fas fa-coffee"></i></div>
+                    <div class="timeline-card">
+                        <span class="timeline-date">October 10, 2021</span>
+                        <h3>Our First Anniversary</h3>
+                        <p>Over the course of a year, coffee dates turned into museum strolls, long road trips, and
+                            endless laughter. On this day, we promised to support each other through all of life's
+                            chapters, realizing that our lives were forever intertwined.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item left-item">
+                    <div class="timeline-badge"><i class="fas fa-ring"></i></div>
+                    <div class="timeline-card">
+                        <span class="timeline-date">May 18, 2024</span>
+                        <h3>The Proposal</h3>
+                        <p>Under a canopy of stars and fairy lights at the high-mountain overlook where we took our
+                            first hike, Arthur asked Evelyn to spend the rest of her life with him. Amid tears of joy,
+                            Evelyn said "Yes!"</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item right-item">
+                    <div class="timeline-badge"><i class="fas fa-church"></i></div>
+                    <div class="timeline-card">
+                        <span class="timeline-date">October 10, 2026</span>
+                        <h3>The Big Day</h3>
+                        <p>And now, we begin our greatest adventure yet: marriage. We cannot wait to celebrate this
+                            monumental day with our dearest family and friends.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SHADOW BANNER GALLERY -->
+        <section id="gallery" class="section-container gallery-section">
+            <h2 class="section-title text-center">Moments Captured</h2>
+            <div class="elegant-line-sub"></div>
+
+            <div class="gallery-grid">
+                <!-- Gallery items with beautiful styles -->
+                <div class="gallery-item" onclick="openLightbox(0)">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop"
+                        alt="Proposal Shoot" loading="lazy">
+                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(1)">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop"
+                        alt="Hiking Together" loading="lazy">
+                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(2)">
+                    <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=600&auto=format&fit=crop"
+                        alt="Cafe Date" loading="lazy">
+                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(3)">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop"
+                        alt="Engagement Portrait" loading="lazy">
+                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(4)">
+                    <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=600&auto=format&fit=crop"
+                        alt="Beach Sunset Path" loading="lazy">
+                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox(5)">
+                    <img src="https://images.unsplash.com/photo-1482575832494-771f74bf6857?q=80&w=600&auto=format&fit=crop"
+                        alt="Holding Hands" loading="lazy">
+                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EVENT DETAILS SECTION -->
+        <section id="events" class="section-container events-section">
+            <h2 class="section-title text-center">Itinerary & Venues</h2>
+            <div class="elegant-line-sub"></div>
+
+            <div class="events-grid">
+                <!-- Ceremony Card -->
+                <div class="event-card">
+                    <div class="card-border"></div>
+                    <div class="event-icon"><i class="fas fa-church"></i></div>
+                    <h3>Wedding Ceremony</h3>
+                    <p class="time">Saturday, 4:00 PM - 5:00 PM</p>
+                    <p class="venue">The Glasshouse Conservatory</p>
+                    <p class="address">1200 Arboretum Way, Golden Gate Park, SF</p>
+                    <div class="card-actions">
+                        <a href="https://maps.google.com" target="_blank" class="event-btn"><i
+                                class="fas fa-map-location-dot"></i> View Map</a>
+                        <button onclick="addToCalendar('ceremony')" class="event-btn btn-secondary"><i
+                                class="fa-regular fa-calendar-plus"></i> Add to Calendar</button>
+                    </div>
+                </div>
+
+                <!-- Reception Card -->
+                <div class="event-card">
+                    <div class="card-border"></div>
+                    <div class="event-icon"><i class="fas fa-glass-champagne"></i></div>
+                    <h3>Grand Reception</h3>
+                    <p class="time">Saturday, 6:00 PM - 11:00 PM</p>
+                    <p class="venue">The Golden Gate Ballroom</p>
+                    <p class="address">800 Terrace Boulevard, San Francisco, CA</p>
+                    <div class="card-actions">
+                        <a href="https://maps.google.com" target="_blank" class="event-btn"><i
+                                class="fas fa-map-location-dot"></i> View Map</a>
+                        <button onclick="addToCalendar('reception')" class="event-btn btn-secondary"><i
+                                class="fa-regular fa-calendar-plus"></i> Add to Calendar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Highlight -->
+            <div class="map-container">
+                <iframe
+                    src="https://maps.google.com/maps?q=Cathedral+Church+of+The+Redemption+1+Church+Road+North+Avenue+New+Delhi+110001&output=embed&z=16"
+                    width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"
+                    title="Cathedral Church of The Redemption, New Delhi"></iframe>
+            </div>
+        </section>
+
+        <!-- RSVP SECTION -->
+        <section id="rsvp" class="section-container rsvp-section">
+            <div class="rsvp-wrapper">
+                <h2 class="section-title text-center gold-accent-text">RSVP</h2>
+                <div class="elegant-line-sub"></div>
+                <p class="rsvp-tagline text-center">Kindly respond by September 1, 2026</p>
+
+                <form id="rsvp-form" onsubmit="handleRSVPSubmit(event)">
+                    <div class="form-group-row">
+                        <div class="form-group flex-1">
+                            <label for="guest-name">Full Name</label>
+                            <input type="text" id="guest-name" required placeholder="e.g., Johnathan Smith">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="guest-email">Email Address</label>
+                            <input type="email" id="guest-email" required placeholder="e.g., john@example.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Will You Attend?</label>
+                        <div class="attendance-radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="attendance" value="attending" required checked>
+                                <span class="radio-design"></span>
+                                <span class="radio-label"><i class="fas fa-circle-check"></i> Joyfully Accept</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="attendance" value="declined" required>
+                                <span class="radio-design"></span>
+                                <span class="radio-label"><i class="fas fa-circle-xmark"></i> Respectfully
+                                    Decline</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="rsvp-details">
+                        <div class="form-group-row">
+                            <div class="form-group flex-1">
+                                <label for="guest-count">Number of Guests</label>
+                                <select id="guest-count">
+                                    <option value="1">Just Me (1)</option>
+                                    <option value="2">Plus One (2)</option>
+                                    <option value="3">Three (3)</option>
+                                    <option value="4">Four (4)</option>
+                                    <option value="5">Five (5)</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="diet-pref">Dietary Preference</label>
+                                <select id="diet-pref">
+                                    <option value="none">No Restrictions</option>
+                                    <option value="vegetarian">Vegetarian</option>
+                                    <option value="vegan">Vegan</option>
+                                    <option value="gluten-free">Gluten-Free</option>
+                                    <option value="other">Other / Allergy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wishes">Wishes or Notes for the Couple</label>
+                        <textarea id="wishes" rows="4" placeholder="Share a warm wish or note here..."></textarea>
+                    </div>
+
+                    <button type="submit" class="rsvp-submit-btn">Send RSVP <i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </section>
+
+        <!-- GUESTBOOK DISPLAY SECTION -->
+        <section id="guestbook" class="section-container guestbook-section">
+            <h2 class="section-title text-center">Wishes from Our Loved Ones</h2>
+            <div class="elegant-line-sub"></div>
+            <div class="guestbook-wall" id="guestbook-wall">
+                <!-- Dynamic wishes loaded from script -->
+            </div>
+        </section>
+
+        <!-- REGISTRY / GIFTS SECTION -->
+        <section id="registry" class="section-container registry-section">
+            <h2 class="section-title text-center">Gifts & Registry</h2>
+            <div class="elegant-line-sub"></div>
+            <p class="section-intro text-center">Your presence on our special day is the greatest gift of all. However,
+                if you wish to honor us with a gift, we have created a registry at the following stores.</p>
+            <div class="registry-logos">
+                <a href="#" class="registry-card"><i class="fa-solid fa-gift"></i><span>Amazon Registry</span></a>
+                <a href="#" class="registry-card"><i class="fa-solid fa-house"></i><span>Crate & Barrel</span></a>
+                <a href="#" class="registry-card"><i class="fa-solid fa-circle-nodes"></i><span>Honeymoon
+                        Fund</span></a>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-content">
+                <h3 class="couple-names-mini">Arthur & Evelyn</h3>
+                <p class="marriage-date">October 10, 2026 · San Francisco, CA</p>
+                <p class="dev-info">Made with love • <span class="admin-trigger" id="admin-trigger"
+                        onclick="promptAdmin()"><i class="fas fa-lock"></i> Guest List</span></p>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- LIGHTBOX FOR GALLERY -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="close-lightbox">&times;</span>
+        <button class="lightbox-nav prev" onclick="event.stopPropagation(); changeLightboxPic(-1)"><i
+                class="fa-solid fa-chevron-left"></i></button>
+        <div class="lightbox-content-wrapper">
+            <img class="lightbox-content" id="lightbox-img" alt="Enlarged photo">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+        </div>
+        <button class="lightbox-nav next" onclick="event.stopPropagation(); changeLightboxPic(1)"><i
+                class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <!-- RSVP SUCCESS MODAL -->
+    <div id="rsvp-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="success-icon"><i class="fas fa-heart"></i></div>
+            <h2>Thank You!</h2>
+            <p id="rsvp-success-msg">Your RSVP has been joyfully received. We can't wait to celebrate with you!</p>
+            <button onclick="closeRSVPModal()" class="event-btn">Wonderful</button>
+        </div>
+    </div>
+
+    <!-- ADMIN GUEST LIST MODAL -->
+    <div id="admin-modal" class="modal-overlay">
+        <div class="modal-content admin-card">
+            <span class="close-modal" onclick="closeAdminModal()">&times;</span>
+            <h2>Guest RSVP Dashboard</h2>
+            <p class="info-desc">Passcode authorized. View and manage all RSVPs submitted.</p>
+            <div class="admin-controls">
+                <button onclick="exportRSVPs()" class="event-btn btn-secondary"><i class="fas fa-file-csv"></i> Export
+                    to CSV</button>
+                <button onclick="clearRSVPs()" class="event-btn btn-danger"><i class="fas fa-trash-can"></i> Clear
+                    All</button>
+            </div>
+
+            <div class="table-container">
+                <table class="rsvp-table">
+                    <thead>
+                        <tr>
+                            <th>Guest Name</th>
+                            <th>Email</th>
+                            <th>Attending?</th>
+                            <th>Guests</th>
+                            <th>Dietary</th>
+                            <th>Wishes</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rsvp-table-body">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- DYNAMIC LIVE CUSTOMIZER PANEL -->
+    <div id="customizer-panel" class="customizer-panel">
+        <button id="customizer-toggle" class="customizer-toggle-btn" aria-label="Toggle Customizer">
+            <i class="fas fa-sliders"></i>
+        </button>
+        <div class="customizer-header">
+            <h3>Card Customizer</h3>
+            <p>Modify wedding details & colors instantly</p>
+        </div>
+        <div class="customizer-body">
+            <!-- Theme Settings -->
+            <div class="custom-section">
+                <h4>Theme Palette</h4>
+                <div class="custom-field">
+                    <label for="theme-preset">Visual Theme</label>
+                    <select id="theme-preset" onchange="updateTheme(this.value)">
+                        <option value="gold-cream">Classic Gold & Cream</option>
+                        <option value="emerald-gold">Imperial Emerald & Gold</option>
+                        <option value="burgundy-rose">Romantic Burgundy & Rose</option>
+                        <option value="royal-navy-silver">Royal Navy & Silver</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Couple Settings -->
+            <div class="custom-section">
+                <h4>Groom & Bride</h4>
+                <div class="custom-field">
+                    <label for="input-groom">Groom Name</label>
+                    <input type="text" id="input-groom" oninput="updateDetail('groomName', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-bride">Bride Name</label>
+                    <input type="text" id="input-bride" oninput="updateDetail('brideName', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-date">Wedding Date</label>
+                    <input type="text" id="input-date" oninput="updateDetail('weddingDateText', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-deadline">RSVP Deadline</label>
+                    <input type="text" id="input-deadline" oninput="updateDetail('rsvpDeadlineText', this.value)">
+                </div>
+            </div>
+
+            <!-- Events Settings -->
+            <div class="custom-section">
+                <h4>Ceremony Venue</h4>
+                <div class="custom-field">
+                    <label for="input-cer-title">Ceremony Title</label>
+                    <input type="text" id="input-cer-title"
+                        oninput="updateEventDetail('ceremony', 'title', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-cer-time">Schedule / Time</label>
+                    <input type="text" id="input-cer-time" oninput="updateEventDetail('ceremony', 'time', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-cer-venue">Venue Name</label>
+                    <input type="text" id="input-cer-venue"
+                        oninput="updateEventDetail('ceremony', 'venue', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-cer-addr">Address</label>
+                    <input type="text" id="input-cer-addr"
+                        oninput="updateEventDetail('ceremony', 'address', this.value)">
+                </div>
+            </div>
+
+            <div class="custom-section">
+                <h4>Reception Venue</h4>
+                <div class="custom-field">
+                    <label for="input-rec-title">Reception Title</label>
+                    <input type="text" id="input-rec-title"
+                        oninput="updateEventDetail('reception', 'title', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-rec-time">Schedule / Time</label>
+                    <input type="text" id="input-rec-time" oninput="updateEventDetail('reception', 'time', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-rec-venue">Venue Name</label>
+                    <input type="text" id="input-rec-venue"
+                        oninput="updateEventDetail('reception', 'venue', this.value)">
+                </div>
+                <div class="custom-field">
+                    <label for="input-rec-addr">Address</label>
+                    <input type="text" id="input-rec-addr"
+                        oninput="updateEventDetail('reception', 'address', this.value)">
+                </div>
+            </div>
+
+            <div class="custom-section">
+                <h4>Exporter</h4>
+                <button onclick="downloadNewConfig()" class="export-config-btn"><i class="fas fa-download"></i> Save
+                    Settings (config.js)</button>
+                <p class="customizer-tip">Saves the edited settings to a <code>config.js</code> file. Download and
+                    replace your local <code>config.js</code> to keep edits permanent.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>
