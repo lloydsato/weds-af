@@ -4,506 +4,578 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maschio &amp; Ann Sweety - Wedding Invitation</title>
+    <title>Maschio &amp; Ann Sweety — September 24, 2026</title>
     <meta name="description"
         content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
-    <meta name="theme-color" content="#070512">
-    <!-- Google Fonts -->
+    <meta name="theme-color" content="#f3ede1">
+
+    <!-- Typography: Fraunces (editorial display serif) + Manrope (grotesque sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap"
         rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+
     <link rel="stylesheet" href="style.css">
-    <!-- Favicon -->
+
     <link rel="icon"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%8D%3C/text%3E%3C/svg%3E">
+
     <!-- Open Graph / Social Share Preview -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Maschio & Ann Sweety - Wedding Invitation">
+    <meta property="og:title" content="Maschio &amp; Ann Sweety — Wedding Invitation">
     <meta property="og:description"
         content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
     <meta property="og:image"
         content="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Maschio & Ann Sweety - Wedding Invitation">
+    <meta name="twitter:title" content="Maschio &amp; Ann Sweety — Wedding Invitation">
     <meta name="twitter:description"
         content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
     <meta name="twitter:image"
         content="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop">
-    <!-- Configuration -->
+
+    <!-- Wedding content configuration -->
     <script src="config.js"></script>
+
+    <noscript>
+        <style>
+            #preloader,
+            #cursor-dot,
+            #cursor-ring {
+                display: none;
+            }
+        </style>
+    </noscript>
 </head>
 
-<body class="theme-midnight-gold">
+<body>
 
-    <!-- LIVE WEBGL UNIVERSE: raymarched wedding rings, nebula, aurora & GPU particles -->
-    <canvas id="gl-canvas" aria-hidden="true"></canvas>
-
-    <!-- Cursor aura (desktop only) -->
-    <div id="cursor-glow" aria-hidden="true"></div>
-
-    <!-- Music Toggle Button -->
-    <button id="music-toggle" aria-label="Toggle Music" class="music-btn">
-        <div class="waves">
-            <span class="stroke"></span>
-            <span class="stroke"></span>
-            <span class="stroke"></span>
-            <span class="stroke"></span>
-            <span class="stroke"></span>
+    <!-- PRELOADER -->
+    <div id="preloader" aria-hidden="true">
+        <div class="preloader-center">
+            <p class="preloader-monogram" data-bind="initials">M &amp; A</p>
+            <p class="preloader-count"><span id="preloader-num">0</span></p>
         </div>
-        <i class="fas fa-music"></i>
-    </button>
-
-    <!-- CELESTIAL GATE / ENTRY OVERLAY -->
-    <div id="entry-overlay" class="entry-overlay">
-        <div class="entry-inner">
-            <div class="entry-orbits" aria-hidden="true">
-                <span class="orbit orbit-a"></span>
-                <span class="orbit orbit-b"></span>
-                <span class="orbit orbit-c"></span>
-                <span class="entry-monogram seal-text">M &amp; A</span>
-            </div>
-            <p class="entry-pre">The Wedding Of</p>
-            <h1 class="couple-names-mini entry-names">Maschio &amp; Ann Sweety</h1>
-            <p class="invite-msg">You are cordially invited to share in our joy.</p>
-            <p class="invite-date">September 24, 2026</p>
-            <button id="enter-btn" class="enter-btn">
-                <span>Enter the Celebration</span>
-                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-            </button>
-            <p class="entry-hint">An immersive invitation &mdash; best with sound on</p>
-        </div>
+        <div class="preloader-curtain curtain-a"></div>
+        <div class="preloader-curtain curtain-b"></div>
     </div>
 
-    <!-- MAIN SCROLLABLE INVITE CONTENT -->
-    <main id="main-content" class="hidden">
+    <!-- THREE.JS SILK BACKDROP (visible behind hero & footer) -->
+    <canvas id="silk-canvas" aria-hidden="true"></canvas>
 
-        <!-- HERO SECTION -->
-        <section id="hero" class="hero-section">
-            <div class="hero-inner" id="hero-inner">
-                <p class="celebrate-text">A Celestial Union</p>
-                <h1 class="couple-names">Maschio &amp; Ann Sweety</h1>
-                <div class="hero-parents">
-                    <p class="parent-line">Maschio Silvester &mdash; Son of Late Stanislaus Silvester &amp; Annie
-                        Muscreen</p>
-                    <div class="elegant-line"><span class="diamond"></span></div>
-                    <p class="parent-line">Ann Sweety Saju &mdash; Daughter of Saju K. Kuriakose &amp; Seeba Saju</p>
+    <!-- CUSTOM CURSOR (fine pointers only) -->
+    <div id="cursor-dot" aria-hidden="true"></div>
+    <div id="cursor-ring" aria-hidden="true"></div>
+
+    <!-- FIXED HEADER -->
+    <header id="site-nav" class="site-nav">
+        <a class="nav-monogram" href="#hero" data-bind="initials">M &amp; A</a>
+        <nav class="nav-links" aria-label="Sections">
+            <a href="#invitation" class="nav-link">Invitation</a>
+            <a href="#gallery" class="nav-link">Gallery</a>
+            <a href="#itinerary" class="nav-link">Itinerary</a>
+            <a href="#guestbook" class="nav-link">Wishes</a>
+        </nav>
+        <div class="nav-right">
+            <a href="#rsvp" class="nav-rsvp-btn"><span>RSVP</span></a>
+            <button id="menu-toggle" class="menu-toggle" aria-label="Open menu" aria-expanded="false"
+                aria-controls="menu-overlay">
+                <span class="menu-bar"></span>
+                <span class="menu-bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- FULLSCREEN MENU -->
+    <div id="menu-overlay" class="menu-overlay" aria-hidden="true">
+        <nav class="menu-nav" aria-label="Menu">
+            <a href="#invitation" class="menu-link"><span class="menu-index">01</span>Invitation</a>
+            <a href="#countdown" class="menu-link"><span class="menu-index">02</span>Countdown</a>
+            <a href="#gallery" class="menu-link"><span class="menu-index">03</span>Gallery</a>
+            <a href="#itinerary" class="menu-link"><span class="menu-index">04</span>Itinerary</a>
+            <a href="#rsvp" class="menu-link"><span class="menu-index">05</span>RSVP</a>
+            <a href="#guestbook" class="menu-link"><span class="menu-index">06</span>Wishes</a>
+        </nav>
+        <p class="menu-footer"><span data-bind="weddingDateText">September 24, 2026</span> · New Delhi</p>
+    </div>
+
+    <!-- MUSIC TOGGLE -->
+    <button id="music-toggle" class="music-toggle" aria-label="Play ambient music" aria-pressed="false">
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+    </button>
+
+    <main id="main">
+
+        <!-- HERO -->
+        <section id="hero" class="hero">
+            <div class="hero-inner">
+                <p class="hero-eyebrow reveal-hero">The Wedding of</p>
+                <h1 class="hero-title" aria-label="Maschio and Ann Sweety">
+                    <span class="hero-line" data-split id="hero-name-groom">Maschio</span>
+                    <span class="hero-amp-row" aria-hidden="true">
+                        <span class="hero-rule reveal-hero"></span>
+                        <span class="hero-amp reveal-hero">&amp;</span>
+                        <span class="hero-rule reveal-hero"></span>
+                    </span>
+                    <span class="hero-line" data-split id="hero-name-bride">Ann Sweety</span>
+                </h1>
+                <div class="hero-meta reveal-hero">
+                    <span data-bind="weddingDateText">September 24, 2026</span>
+                    <span class="meta-dot" aria-hidden="true"></span>
+                    <span>Cathedral Church of The Redemption</span>
+                    <span class="meta-dot" aria-hidden="true"></span>
+                    <span>New Delhi</span>
                 </div>
-                <p class="save-the-date">Save the Date</p>
-                <p class="hero-date">24 . 09 . 2026</p>
-                <p class="hero-location">Cathedral Church of The Redemption &middot; New Delhi</p>
-                <blockquote class="hero-quote">
-                    <p>&ldquo;Two are better than one; and a threefold cord is not quickly broken.&rdquo;</p>
-                    <cite>Ecclesiastes 4:9, 12</cite>
-                </blockquote>
             </div>
-            <div class="scroll-indicator">
-                <p>Scroll to Explore</p>
-                <i class="fa-solid fa-chevron-down animate-bounce" aria-hidden="true"></i>
-            </div>
-        </section>
-
-        <!-- COUNTDOWN SECTION -->
-        <section id="timer" class="section-container timer-section">
-            <p class="section-eyebrow reveal">Counting the stardust</p>
-            <h2 class="section-title text-center reveal">Until We Say &ldquo;I Do&rdquo;</h2>
-            <div class="elegant-line-sub reveal"></div>
-            <div class="countdown-grid">
-                <div class="countdown-card glass reveal" data-tilt>
-                    <span id="days" class="time-num">00</span>
-                    <span class="time-label">Days</span>
-                </div>
-                <div class="countdown-card glass reveal" data-tilt>
-                    <span id="hours" class="time-num">00</span>
-                    <span class="time-label">Hours</span>
-                </div>
-                <div class="countdown-card glass reveal" data-tilt>
-                    <span id="minutes" class="time-num">00</span>
-                    <span class="time-label">Minutes</span>
-                </div>
-                <div class="countdown-card glass reveal" data-tilt>
-                    <span id="seconds" class="time-num">00</span>
-                    <span class="time-label">Seconds</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- GALLERY -->
-        <section id="gallery" class="section-container gallery-section">
-            <p class="section-eyebrow reveal">Moments captured</p>
-            <h2 class="section-title text-center reveal">Written in the Stars</h2>
-            <div class="elegant-line-sub reveal"></div>
-
-            <div class="gallery-grid">
-                <div class="gallery-item reveal" data-tilt onclick="openLightbox(0)">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop"
-                        alt="Proposal Shoot" loading="lazy">
-                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="gallery-item reveal" data-tilt onclick="openLightbox(1)">
-                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop"
-                        alt="Hiking Together" loading="lazy">
-                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="gallery-item reveal" data-tilt onclick="openLightbox(2)">
-                    <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=600&auto=format&fit=crop"
-                        alt="Cafe Date" loading="lazy">
-                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="gallery-item reveal" data-tilt onclick="openLightbox(3)">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop"
-                        alt="Engagement Portrait" loading="lazy">
-                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="gallery-item reveal" data-tilt onclick="openLightbox(4)">
-                    <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=600&auto=format&fit=crop"
-                        alt="Beach Sunset Path" loading="lazy">
-                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="gallery-item reveal" data-tilt onclick="openLightbox(5)">
-                    <img src="https://images.unsplash.com/photo-1482575832494-771f74bf6857?q=80&w=600&auto=format&fit=crop"
-                        alt="Holding Hands" loading="lazy">
-                    <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-                    </div>
-                </div>
+            <div class="hero-scroll-cue reveal-hero" aria-hidden="true">
+                <span class="cue-label">Scroll</span>
+                <span class="cue-line"></span>
             </div>
         </section>
 
-        <!-- EVENT DETAILS SECTION -->
-        <section id="events" class="section-container events-section">
-            <p class="section-eyebrow reveal">The celebration</p>
-            <h2 class="section-title text-center reveal">Itinerary &amp; Venues</h2>
-            <div class="elegant-line-sub reveal"></div>
+        <!-- MARQUEE DIVIDER -->
+        <div class="marquee" aria-hidden="true">
+            <div class="marquee-track" id="marquee-track">
+                <!-- populated by script -->
+            </div>
+        </div>
 
-            <div class="events-grid">
-                <!-- Ceremony Card -->
-                <div class="event-card glass aura reveal" data-tilt>
-                    <div class="event-icon"><i class="fas fa-church" aria-hidden="true"></i></div>
-                    <h3>Wedding Ceremony</h3>
-                    <p class="time">Thursday, 4:00 PM – 5:00 PM</p>
-                    <p class="venue">Cathedral Church of The Redemption</p>
-                    <p class="address">1 Church Road, North Avenue, New Delhi 110001</p>
-                    <div class="card-actions">
-                        <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="event-btn"><i
-                                class="fas fa-map-location-dot" aria-hidden="true"></i> View Map</a>
-                        <button onclick="addToCalendar('ceremony')" class="event-btn btn-secondary"><i
-                                class="fas fa-calendar-plus" aria-hidden="true"></i> Add to Calendar</button>
-                    </div>
+        <!-- INVITATION -->
+        <section id="invitation" class="section invitation">
+            <div class="section-head">
+                <p class="section-eyebrow" data-reveal>No. 01 — The Invitation</p>
+            </div>
+            <div class="invitation-grid">
+                <div class="invitation-display">
+                    <h2 class="display-title" data-reveal-lines>
+                        <span class="dt-line">Together</span>
+                        <span class="dt-line">with our</span>
+                        <span class="dt-line"><em>families</em></span>
+                    </h2>
                 </div>
+                <div class="invitation-copy">
+                    <p class="lead" data-reveal data-bind="cardInviteMsg">You are cordially invited to share in our
+                        joy.</p>
+                    <div class="parents" data-reveal>
+                        <p><strong>Maschio Silvester</strong><br>son of Late Stanislaus Silvester &amp; Annie Muscreen
+                        </p>
+                        <p class="parents-amp" aria-hidden="true">&amp;</p>
+                        <p><strong>Ann Sweety Saju</strong><br>daughter of Saju K. Kuriakose &amp; Seeba Saju</p>
+                    </div>
+                    <blockquote class="verse" data-reveal>
+                        <p>&ldquo;Two are better than one; and a threefold cord is not quickly broken.&rdquo;</p>
+                        <cite>— Ecclesiastes 4:9, 12</cite>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
 
-                <!-- Reception Card -->
-                <div class="event-card glass aura reveal" data-tilt>
-                    <div class="event-icon"><i class="fas fa-champagne-glasses" aria-hidden="true"></i></div>
-                    <h3>Grand Reception</h3>
-                    <p class="time">Thursday, 7:00 PM – 11:00 PM</p>
-                    <p class="venue">Details to be announced</p>
-                    <p class="address">New Delhi, India</p>
-                    <div class="card-actions">
-                        <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="event-btn"><i
-                                class="fas fa-map-location-dot" aria-hidden="true"></i> View Map</a>
-                        <button onclick="addToCalendar('reception')" class="event-btn btn-secondary"><i
-                                class="fas fa-calendar-plus" aria-hidden="true"></i> Add to Calendar</button>
+        <!-- COUNTDOWN -->
+        <section id="countdown" class="section countdown">
+            <div class="section-head">
+                <p class="section-eyebrow" data-reveal>No. 02 — The Countdown</p>
+                <h2 class="section-title" data-reveal-lines><span class="dt-line">Until we say</span><span
+                        class="dt-line"><em>&ldquo;I do&rdquo;</em></span></h2>
+            </div>
+            <div class="countdown-row" data-reveal role="timer" aria-label="Countdown to the wedding">
+                <div class="count-unit">
+                    <span class="count-num" id="cd-days">000</span>
+                    <span class="count-label">Days</span>
+                </div>
+                <span class="count-sep" aria-hidden="true">:</span>
+                <div class="count-unit">
+                    <span class="count-num" id="cd-hours">00</span>
+                    <span class="count-label">Hours</span>
+                </div>
+                <span class="count-sep" aria-hidden="true">:</span>
+                <div class="count-unit">
+                    <span class="count-num" id="cd-minutes">00</span>
+                    <span class="count-label">Minutes</span>
+                </div>
+                <span class="count-sep" aria-hidden="true">:</span>
+                <div class="count-unit">
+                    <span class="count-num" id="cd-seconds">00</span>
+                    <span class="count-label">Seconds</span>
+                </div>
+            </div>
+            <p class="countdown-note" data-reveal><span data-bind="weddingDateText">September 24, 2026</span> — save
+                the date</p>
+        </section>
+
+        <!-- GALLERY (pinned horizontal scroll on desktop, swipe on mobile) -->
+        <section id="gallery" class="gallery-section">
+            <div class="gallery-pin" id="gallery-pin">
+                <div class="gallery-head">
+                    <p class="section-eyebrow" data-reveal>No. 03 — The Gallery</p>
+                    <h2 class="section-title" data-reveal-lines><span class="dt-line">Moments,</span><span
+                            class="dt-line"><em>together</em></span></h2>
+                    <p class="gallery-hint" data-reveal aria-hidden="true">Drag / scroll →</p>
+                </div>
+                <div class="gallery-track" id="gallery-track">
+                    <figure class="gallery-item" data-index="0">
+                        <div class="gallery-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900&auto=format&fit=crop"
+                                alt="The proposal" loading="lazy">
+                        </div>
+                        <figcaption><span>01</span> The proposal</figcaption>
+                    </figure>
+                    <figure class="gallery-item" data-index="1">
+                        <div class="gallery-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=900&auto=format&fit=crop"
+                                alt="Walking together" loading="lazy">
+                        </div>
+                        <figcaption><span>02</span> Walking together</figcaption>
+                    </figure>
+                    <figure class="gallery-item" data-index="2">
+                        <div class="gallery-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=900&auto=format&fit=crop"
+                                alt="Golden hour" loading="lazy">
+                        </div>
+                        <figcaption><span>03</span> Golden hour</figcaption>
+                    </figure>
+                    <figure class="gallery-item" data-index="3">
+                        <div class="gallery-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=900&auto=format&fit=crop"
+                                alt="Her smile" loading="lazy">
+                        </div>
+                        <figcaption><span>04</span> Her smile</figcaption>
+                    </figure>
+                    <figure class="gallery-item" data-index="4">
+                        <div class="gallery-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=900&auto=format&fit=crop"
+                                alt="By the sea" loading="lazy">
+                        </div>
+                        <figcaption><span>05</span> By the sea</figcaption>
+                    </figure>
+                    <figure class="gallery-item" data-index="5">
+                        <div class="gallery-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1482575832494-771f74bf6857?q=80&w=900&auto=format&fit=crop"
+                                alt="Hand in hand" loading="lazy">
+                        </div>
+                        <figcaption><span>06</span> Hand in hand</figcaption>
+                    </figure>
+                    <div class="gallery-endcard">
+                        <p>and the best<br><em>is yet to come</em></p>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Map Highlight -->
-            <div class="map-container glass reveal">
+        <!-- ITINERARY -->
+        <section id="itinerary" class="section itinerary">
+            <div class="section-head">
+                <p class="section-eyebrow" data-reveal>No. 04 — The Day</p>
+                <h2 class="section-title" data-reveal-lines><span class="dt-line">One day,</span><span
+                        class="dt-line"><em>two celebrations</em></span></h2>
+            </div>
+
+            <div class="event-list">
+                <article class="event-row" data-reveal>
+                    <div class="event-time">
+                        <span class="event-clock" id="ceremony-time-short">4:00 PM</span>
+                        <span class="event-day">Thursday</span>
+                    </div>
+                    <div class="event-body">
+                        <h3 id="ceremony-title">Wedding Ceremony</h3>
+                        <p class="event-venue" id="ceremony-venue">Cathedral Church of The Redemption</p>
+                        <p class="event-address" id="ceremony-address">1 Church Road, North Avenue, New Delhi 110001
+                        </p>
+                        <div class="event-actions">
+                            <a class="text-btn" id="ceremony-map-link"
+                                href="https://maps.google.com/maps?q=Cathedral+Church+of+The+Redemption+1+Church+Road+North+Avenue+New+Delhi+110001"
+                                target="_blank" rel="noopener noreferrer">View map<svg viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path d="M7 17L17 7M17 7H8M17 7v9" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg></a>
+                            <button class="text-btn" type="button" onclick="addToCalendar('ceremony')">Add to
+                                calendar<svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                </svg></button>
+                        </div>
+                    </div>
+                    <span class="event-num" aria-hidden="true">I</span>
+                </article>
+
+                <article class="event-row" data-reveal>
+                    <div class="event-time">
+                        <span class="event-clock" id="reception-time-short">7:00 PM</span>
+                        <span class="event-day">Thursday</span>
+                    </div>
+                    <div class="event-body">
+                        <h3 id="reception-title">Grand Reception</h3>
+                        <p class="event-venue" id="reception-venue">Details to be announced</p>
+                        <p class="event-address" id="reception-address">New Delhi, India</p>
+                        <div class="event-actions">
+                            <a class="text-btn" id="reception-map-link"
+                                href="https://maps.google.com/maps?q=New+Delhi,+India" target="_blank"
+                                rel="noopener noreferrer">View map<svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M7 17L17 7M17 7H8M17 7v9" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg></a>
+                            <button class="text-btn" type="button" onclick="addToCalendar('reception')">Add to
+                                calendar<svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                </svg></button>
+                        </div>
+                    </div>
+                    <span class="event-num" aria-hidden="true">II</span>
+                </article>
+            </div>
+
+            <div class="map-frame" data-reveal>
                 <iframe
                     src="https://maps.google.com/maps?q=Cathedral+Church+of+The+Redemption+1+Church+Road+North+Avenue+New+Delhi+110001&output=embed&z=16"
-                    width="100%" height="320" style="border:0;" allowfullscreen="" loading="lazy"
+                    width="100%" height="380" style="border:0;" allowfullscreen="" loading="lazy"
                     title="Cathedral Church of The Redemption, New Delhi"></iframe>
             </div>
         </section>
 
-        <!-- RSVP SECTION -->
-        <section id="rsvp" class="section-container rsvp-section">
-            <div class="rsvp-wrapper glass aura reveal">
-                <p class="section-eyebrow">Join us among the stars</p>
-                <h2 class="section-title text-center gold-accent-text">RSVP</h2>
-                <div class="elegant-line-sub"></div>
-                <p class="rsvp-tagline text-center">Kindly respond by September 1, 2026</p>
+        <!-- RSVP -->
+        <section id="rsvp" class="section rsvp">
+            <div class="rsvp-grid">
+                <div class="rsvp-intro">
+                    <p class="section-eyebrow on-dark" data-reveal>No. 05 — The Answer</p>
+                    <h2 class="rsvp-title" data-reveal-lines>
+                        <span class="dt-line">Will you</span>
+                        <span class="dt-line"><em>join us?</em></span>
+                    </h2>
+                    <p class="rsvp-deadline" data-reveal>Kindly respond by <strong
+                            data-bind="rsvpDeadlineText">September 1, 2026</strong></p>
+                    <p class="rsvp-note" data-reveal>Your presence is the greatest gift of all. Let us know if we
+                        should set a place for you beneath the September sky.</p>
+                </div>
 
-                <form id="rsvp-form" onsubmit="handleRSVPSubmit(event)">
-                    <div class="form-group-row">
-                        <div class="form-group flex-1">
-                            <label for="guest-name">Full Name</label>
-                            <input type="text" id="guest-name" required placeholder="e.g., Johnathan Smith">
-                        </div>
-                        <div class="form-group flex-1">
-                            <label for="guest-email">Email Address</label>
-                            <input type="email" id="guest-email" required placeholder="e.g., john@example.com">
-                        </div>
+                <form id="rsvp-form" class="rsvp-form" novalidate>
+                    <div class="field" data-reveal>
+                        <label for="guest-name">Full name</label>
+                        <input type="text" id="guest-name" name="name" required autocomplete="name"
+                            placeholder="Johnathan Smith">
+                    </div>
+                    <div class="field" data-reveal>
+                        <label for="guest-email">Email address</label>
+                        <input type="email" id="guest-email" name="email" required autocomplete="email"
+                            placeholder="john@example.com">
                     </div>
 
-                    <div class="form-group">
-                        <label>Will You Attend?</label>
-                        <div class="attendance-radio-group">
-                            <label class="radio-card">
-                                <input type="radio" name="attendance" value="attending" required checked>
-                                <span class="radio-design"></span>
-                                <span class="radio-label"><i class="fas fa-circle-check" aria-hidden="true"></i>
-                                    Joyfully Accept</span>
+                    <fieldset class="field" data-reveal>
+                        <legend>Will you attend?</legend>
+                        <div class="segmented" role="radiogroup" aria-label="Will you attend?">
+                            <label class="segment">
+                                <input type="radio" name="attendance" value="attending" checked>
+                                <span class="segment-face">Joyfully accept</span>
                             </label>
-                            <label class="radio-card">
-                                <input type="radio" name="attendance" value="declined" required>
-                                <span class="radio-design"></span>
-                                <span class="radio-label"><i class="fas fa-circle-xmark" aria-hidden="true"></i>
-                                    Respectfully Decline</span>
+                            <label class="segment">
+                                <input type="radio" name="attendance" value="declined">
+                                <span class="segment-face">Regretfully decline</span>
                             </label>
                         </div>
-                    </div>
+                    </fieldset>
 
-                    <div id="rsvp-details">
-                        <div class="form-group-row">
-                            <div class="form-group flex-1">
-                                <label for="guest-count">Number of Guests</label>
-                                <select id="guest-count">
-                                    <option value="1">Just Me (1)</option>
-                                    <option value="2">Plus One (2)</option>
-                                    <option value="3">Three (3)</option>
-                                    <option value="4">Four (4)</option>
-                                    <option value="5">Five (5)</option>
-                                </select>
+                    <div id="rsvp-details" class="rsvp-details">
+                        <div class="field-row">
+                            <div class="field" data-reveal>
+                                <label id="guest-count-label" for="guest-count-value">Guests</label>
+                                <div class="stepper">
+                                    <button type="button" class="step-btn" id="guest-minus"
+                                        aria-label="Fewer guests">−</button>
+                                    <output class="step-value" id="guest-count-value" aria-labelledby="guest-count-label"
+                                        aria-live="polite">1</output>
+                                    <button type="button" class="step-btn" id="guest-plus"
+                                        aria-label="More guests">+</button>
+                                </div>
                             </div>
-                            <div class="form-group flex-1">
-                                <label for="diet-pref">Dietary Preference</label>
-                                <select id="diet-pref">
-                                    <option value="none">No Restrictions</option>
-                                    <option value="vegetarian">Vegetarian</option>
-                                    <option value="vegan">Vegan</option>
-                                    <option value="gluten-free">Gluten-Free</option>
-                                    <option value="other">Other / Allergy</option>
-                                </select>
+                            <div class="field" data-reveal>
+                                <label for="diet-pref">Dietary preference</label>
+                                <div class="select-wrap">
+                                    <select id="diet-pref" name="diet">
+                                        <option value="none">No restrictions</option>
+                                        <option value="vegetarian">Vegetarian</option>
+                                        <option value="vegan">Vegan</option>
+                                        <option value="gluten-free">Gluten-free</option>
+                                        <option value="other">Other / allergy</option>
+                                    </select>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="wishes">Wishes or Notes for the Couple</label>
-                        <textarea id="wishes" rows="4" placeholder="Share a warm wish or note here..."></textarea>
+                    <div class="field" data-reveal>
+                        <label for="wishes">A wish for the couple <span class="optional">(optional)</span></label>
+                        <textarea id="wishes" name="wishes" rows="3"
+                            placeholder="Share a warm wish or note…"></textarea>
                     </div>
 
-                    <button type="submit" class="rsvp-submit-btn">Send RSVP <i class="fas fa-paper-plane"
-                            aria-hidden="true"></i></button>
+                    <button type="submit" class="rsvp-submit" data-reveal>
+                        <span class="rsvp-submit-label">Send my answer</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 12h14m0 0l-6-6m6 6l-6 6" fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <p class="rsvp-form-hint" data-reveal>Responses are saved on this device<span
+                            id="webhook-hint"></span>.</p>
                 </form>
             </div>
         </section>
 
-        <!-- GUESTBOOK DISPLAY SECTION -->
-        <section id="guestbook" class="section-container guestbook-section">
-            <p class="section-eyebrow reveal">A constellation of wishes</p>
-            <h2 class="section-title text-center reveal">Words From Our Loved Ones</h2>
-            <div class="elegant-line-sub reveal"></div>
-            <div class="guestbook-wall" id="guestbook-wall">
-                <!-- Dynamic wishes loaded from script -->
+        <!-- GUESTBOOK -->
+        <section id="guestbook" class="section guestbook">
+            <div class="section-head">
+                <p class="section-eyebrow" data-reveal>No. 06 — The Wishes</p>
+                <h2 class="section-title" data-reveal-lines><span class="dt-line">Words from</span><span
+                        class="dt-line"><em>our loved ones</em></span></h2>
+            </div>
+            <div class="wish-wall" id="wish-wall">
+                <!-- populated by script -->
             </div>
         </section>
 
-        <!-- REGISTRY / GIFTS SECTION -->
-        <section id="registry" class="section-container registry-section">
-            <p class="section-eyebrow reveal">Tokens of love</p>
-            <h2 class="section-title text-center reveal">Gifts &amp; Registry</h2>
-            <div class="elegant-line-sub reveal"></div>
-            <p class="section-intro text-center reveal">Your presence on our special day is the greatest gift of all.
-                However, if you wish to honor us with a gift, we have created a registry at the following stores.</p>
-            <div class="registry-logos">
-                <a href="#" class="registry-card glass reveal" data-tilt><i class="fa-solid fa-gift"
-                        aria-hidden="true"></i><span>Amazon Registry</span></a>
-                <a href="#" class="registry-card glass reveal" data-tilt><i class="fa-solid fa-house"
-                        aria-hidden="true"></i><span>Crate &amp; Barrel</span></a>
-                <a href="#" class="registry-card glass reveal" data-tilt><i class="fa-solid fa-circle-nodes"
-                        aria-hidden="true"></i><span>Honeymoon Fund</span></a>
+        <!-- REGISTRY -->
+        <section id="registry" class="section registry">
+            <div class="section-head">
+                <p class="section-eyebrow" data-reveal>No. 07 — The Registry</p>
+                <h2 class="section-title" data-reveal-lines><span class="dt-line">Tokens</span><span
+                        class="dt-line"><em>of love</em></span></h2>
+            </div>
+            <p class="registry-intro" data-reveal>Your presence on our special day is the greatest gift of all. Should
+                you wish to honor us further, we are registered at the stores below.</p>
+            <div class="registry-list">
+                <a href="#" class="registry-row" data-reveal>
+                    <span class="registry-name">Amazon Registry</span>
+                    <span class="registry-arrow" aria-hidden="true"><svg viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M17 7H8M17 7v9" fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></span>
+                </a>
+                <a href="#" class="registry-row" data-reveal>
+                    <span class="registry-name">Crate &amp; Barrel</span>
+                    <span class="registry-arrow" aria-hidden="true"><svg viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M17 7H8M17 7v9" fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></span>
+                </a>
+                <a href="#" class="registry-row" data-reveal>
+                    <span class="registry-name">Honeymoon Fund</span>
+                    <span class="registry-arrow" aria-hidden="true"><svg viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M17 7H8M17 7v9" fill="none" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></span>
+                </a>
             </div>
         </section>
 
         <!-- FOOTER -->
         <footer class="footer">
-            <div class="footer-content">
-                <h3 class="couple-names-mini footer-names">Maschio &amp; Ann Sweety</h3>
-                <p class="marriage-date">September 24, 2026 · New Delhi</p>
-                <p class="dev-info">Made with love • <span class="admin-trigger" id="admin-trigger"
-                        onclick="promptAdmin()" role="button" tabindex="0"
-                        aria-label="Open guest list admin dashboard"><i class="fas fa-lock" aria-hidden="true"></i>
-                        Guest List</span></p>
+            <p class="footer-eyebrow">See you there</p>
+            <p class="footer-names" aria-hidden="true"><span data-bind="groomName">Maschio</span><em>&amp;</em><span
+                    data-bind="brideName">Ann Sweety</span></p>
+            <p class="footer-meta"><span data-bind="weddingDateText">September 24, 2026</span> · New Delhi, India</p>
+            <div class="footer-bottom">
+                <p>Made with love</p>
+                <button type="button" class="admin-trigger" id="admin-trigger">Guest list</button>
             </div>
         </footer>
-
     </main>
 
-    <!-- LIGHTBOX FOR GALLERY -->
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-        <span class="close-lightbox" role="button" tabindex="0" aria-label="Close photo viewer">&times;</span>
-        <button class="lightbox-nav prev" aria-label="Previous photo"
-            onclick="event.stopPropagation(); changeLightboxPic(-1)"><i class="fa-solid fa-chevron-left"
-                aria-hidden="true"></i></button>
-        <div class="lightbox-content-wrapper">
-            <img class="lightbox-content" id="lightbox-img" alt="Enlarged photo">
-            <div id="lightbox-caption" class="lightbox-caption"></div>
-        </div>
-        <button class="lightbox-nav next" aria-label="Next photo"
-            onclick="event.stopPropagation(); changeLightboxPic(1)"><i class="fa-solid fa-chevron-right"
-                aria-hidden="true"></i></button>
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Photo viewer">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close photo viewer">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" />
+            </svg>
+        </button>
+        <button class="lightbox-nav prev" id="lightbox-prev" aria-label="Previous photo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <figure class="lightbox-figure">
+            <img id="lightbox-img" alt="">
+            <figcaption id="lightbox-caption"></figcaption>
+        </figure>
+        <button class="lightbox-nav next" id="lightbox-next" aria-label="Next photo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
     </div>
 
     <!-- RSVP SUCCESS MODAL -->
-    <div id="rsvp-modal" class="modal-overlay">
-        <div class="modal-content glass aura">
-            <div class="success-icon"><i class="fas fa-heart" aria-hidden="true"></i></div>
-            <h2>Thank You!</h2>
-            <p id="rsvp-success-msg">Your RSVP has been joyfully received. We can't wait to celebrate with you!</p>
-            <button onclick="closeRSVPModal()" class="event-btn">Wonderful</button>
+    <div id="rsvp-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true"
+        aria-labelledby="rsvp-modal-title">
+        <div class="modal-card">
+            <p class="modal-monogram" data-bind="initials">M &amp; A</p>
+            <h2 id="rsvp-modal-title">Thank you</h2>
+            <p id="rsvp-success-msg">Your RSVP has been received. We can't wait to celebrate with you!</p>
+            <button type="button" class="modal-btn" id="rsvp-modal-close">Wonderful</button>
         </div>
     </div>
 
     <!-- ADMIN GUEST LIST MODAL -->
-    <div id="admin-modal" class="modal-overlay">
-        <div class="modal-content admin-card glass">
-            <span class="close-modal" onclick="closeAdminModal()">&times;</span>
-            <h2>Guest RSVP Dashboard</h2>
-            <p class="info-desc">Passcode authorized. View and manage all RSVPs submitted.</p>
-            <div class="admin-controls">
-                <button onclick="exportRSVPs()" class="event-btn btn-secondary"><i class="fas fa-file-csv"
-                        aria-hidden="true"></i> Export to CSV</button>
-                <button onclick="clearRSVPs()" class="event-btn btn-danger"><i class="fas fa-trash-can"
-                        aria-hidden="true"></i> Clear All</button>
+    <div id="admin-modal" class="modal admin-modal" aria-hidden="true" role="dialog" aria-modal="true"
+        aria-labelledby="admin-modal-title">
+        <div class="modal-card admin-card">
+            <button type="button" class="admin-close" id="admin-close" aria-label="Close dashboard">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" />
+                </svg>
+            </button>
+            <h2 id="admin-modal-title">Guest list</h2>
+            <div class="admin-stats" id="admin-stats">
+                <!-- populated by script -->
             </div>
-
-            <div class="table-container">
-                <table class="rsvp-table">
+            <div class="admin-actions">
+                <button type="button" class="text-btn" id="export-csv-btn">Export CSV<svg viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg></button>
+                <button type="button" class="text-btn danger" id="clear-rsvps-btn">Clear all<svg viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg></button>
+            </div>
+            <div class="table-scroll">
+                <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Guest Name</th>
+                            <th>Guest</th>
                             <th>Email</th>
-                            <th>Attending?</th>
+                            <th>Attending</th>
                             <th>Guests</th>
                             <th>Dietary</th>
                             <th>Wishes</th>
-                            <th>Timestamp</th>
+                            <th>When</th>
                         </tr>
                     </thead>
-                    <tbody id="rsvp-table-body">
-                        <!-- Loaded via JS -->
-                    </tbody>
+                    <tbody id="rsvp-table-body"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- DYNAMIC LIVE CUSTOMIZER PANEL -->
-    <div id="customizer-panel" class="customizer-panel">
-        <button id="customizer-toggle" class="customizer-toggle-btn" aria-label="Toggle Customizer">
-            <i class="fas fa-sliders" aria-hidden="true"></i>
-        </button>
-        <div class="customizer-header">
-            <h3>Card Customizer</h3>
-            <p>Modify wedding details &amp; scene colors instantly</p>
-        </div>
-        <div class="customizer-body">
-            <!-- Theme Settings -->
-            <div class="custom-section">
-                <h4>Universe Palette</h4>
-                <div class="custom-field">
-                    <label for="theme-preset">Visual Theme</label>
-                    <select id="theme-preset" onchange="updateTheme(this.value)">
-                        <option value="midnight-gold">Midnight Gold</option>
-                        <option value="nebula-rose">Nebula Rose</option>
-                        <option value="aurora-emerald">Aurora Emerald</option>
-                        <option value="royal-violet">Royal Violet</option>
-                    </select>
-                </div>
-            </div>
+    <!-- Libraries: GSAP + ScrollTrigger, Lenis smooth scroll, Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-            <!-- Couple Settings -->
-            <div class="custom-section">
-                <h4>Groom &amp; Bride</h4>
-                <div class="custom-field">
-                    <label for="input-groom">Groom Name</label>
-                    <input type="text" id="input-groom" oninput="updateDetail('groomName', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-bride">Bride Name</label>
-                    <input type="text" id="input-bride" oninput="updateDetail('brideName', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-date">Wedding Date</label>
-                    <input type="text" id="input-date" oninput="updateDetail('weddingDateText', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-deadline">RSVP Deadline</label>
-                    <input type="text" id="input-deadline" oninput="updateDetail('rsvpDeadlineText', this.value)">
-                </div>
-            </div>
-
-            <!-- Events Settings -->
-            <div class="custom-section">
-                <h4>Ceremony Venue</h4>
-                <div class="custom-field">
-                    <label for="input-cer-title">Ceremony Title</label>
-                    <input type="text" id="input-cer-title"
-                        oninput="updateEventDetail('ceremony', 'title', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-cer-time">Schedule / Time</label>
-                    <input type="text" id="input-cer-time" oninput="updateEventDetail('ceremony', 'time', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-cer-venue">Venue Name</label>
-                    <input type="text" id="input-cer-venue"
-                        oninput="updateEventDetail('ceremony', 'venue', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-cer-addr">Address</label>
-                    <input type="text" id="input-cer-addr"
-                        oninput="updateEventDetail('ceremony', 'address', this.value)">
-                </div>
-            </div>
-
-            <div class="custom-section">
-                <h4>Reception Venue</h4>
-                <div class="custom-field">
-                    <label for="input-rec-title">Reception Title</label>
-                    <input type="text" id="input-rec-title"
-                        oninput="updateEventDetail('reception', 'title', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-rec-time">Schedule / Time</label>
-                    <input type="text" id="input-rec-time" oninput="updateEventDetail('reception', 'time', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-rec-venue">Venue Name</label>
-                    <input type="text" id="input-rec-venue"
-                        oninput="updateEventDetail('reception', 'venue', this.value)">
-                </div>
-                <div class="custom-field">
-                    <label for="input-rec-addr">Address</label>
-                    <input type="text" id="input-rec-addr"
-                        oninput="updateEventDetail('reception', 'address', this.value)">
-                </div>
-            </div>
-
-            <div class="custom-section">
-                <h4>Exporter</h4>
-                <button onclick="downloadNewConfig()" class="export-config-btn"><i class="fas fa-download"
-                        aria-hidden="true"></i> Save Settings (config.js)</button>
-                <p class="customizer-tip">Saves the edited settings to a <code>config.js</code> file. Download and
-                    replace your local <code>config.js</code> to keep edits permanent.</p>
-                <button onclick="resetCustomization()" class="export-config-btn btn-ghost"><i
-                        class="fas fa-rotate-left" aria-hidden="true"></i> Reset to Defaults</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Custom JavaScript -->
     <script src="script.js"></script>
 </body>
 
