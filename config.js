@@ -1,6 +1,6 @@
-// --- WEDDING DIGITAL CARD CONFIGURATION DATA ---
-// Edit these values directly, or use the on-page "Card Customizer" drawer
-// and click "Save Settings" to download an updated copy of this file.
+// --- WEDDING INVITATION CONFIGURATION ---
+// All copy on the page is driven by this file. Edit the values below and
+// reload — no other file needs to change.
 const WEDDING_CONFIG = {
     groomName: "Maschio",
     brideName: "Ann Sweety",
@@ -8,14 +8,10 @@ const WEDDING_CONFIG = {
     cardInviteMsg: "You are cordially invited to share in our joy.",
     weddingDateText: "September 24, 2026",
     rsvpDeadlineText: "September 1, 2026",
-    // Used to drive the countdown timer and the numeric hero date (DD . MM . YYYY).
+    // Drives the countdown timer.
     countdownTarget: "2026-09-24T16:00:00",
-    // Visual theme. Each preset re-colors both the interface and the live
-    // WebGL scene (nebula, aurora, rings and particles). Options:
-    // "midnight-gold" | "nebula-rose" | "aurora-emerald" | "royal-violet"
-    themePreset: "midnight-gold",
 
-    // Passcode for the "Guest List" admin dashboard link in the footer.
+    // Passcode for the "Guest list" dashboard link in the footer.
     // NOTE: this is a static site with no backend, so this code is only ever
     // checked in the guest's own browser and is visible to anyone who views
     // the page source. Treat it as a light deterrent, not real security.
