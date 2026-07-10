@@ -683,10 +683,10 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     .rsvp-title em {
         background-image: linear-gradient(100deg,
                 var(--bronze) 0%,
-                var(--bronze) 34%,
+                var(--bronze) 40%,
                 #fff2cf 47%,
-                var(--bronze-soft) 56%,
-                var(--bronze) 70%,
+                var(--bronze-soft) 53%,
+                var(--bronze) 60%,
                 var(--bronze) 100%);
         background-size: 250% 100%;
         background-position: 100% 0;
@@ -704,13 +704,16 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     }
 }
 
+/* Slides the 250%-wide gradient from one fully-covering end to the other;
+   past 100%/below 0% the no-repeat background stops covering the text and
+   the transparent-fill letters vanish. */
 @keyframes accent-sheen {
     from {
         background-position: 100% 0;
     }
 
     to {
-        background-position: -45% 0;
+        background-position: 0% 0;
     }
 }
 
