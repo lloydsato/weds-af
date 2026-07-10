@@ -724,6 +724,18 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     margin-bottom: -0.1em;
 }
 
+/* The reveal mask (overflow: hidden) clips whatever dips below the line box.
+   Every display heading closes on an italic Fraunces accent word — "join us?",
+   "families", "our loved ones" — whose deep descenders and swashes fall well
+   past the 0.1em buffer above and were being cut off. Give the closing line
+   extra bottom room so they clear the mask. Padding and negative margin cancel,
+   so spacing to the following element is unchanged, and no line follows this one
+   inside the heading to overlap. */
+.dt-line:last-child {
+    padding-bottom: 0.34em;
+    margin-bottom: -0.34em;
+}
+
 .dt-line>.dt-inner {
     display: block;
     will-change: transform;
