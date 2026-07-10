@@ -181,16 +181,16 @@
                 "  vec2 m = (uMouse - 0.5) * 0.35;",
                 "  float f = fbm(p * 2.1 + q * 1.4 + m + vec2(t * 0.5, -t * 0.3));",
                 "",
-                "  // warm paper -> deeper parchment folds -> champagne sheen",
-                "  vec3 paper    = vec3(0.953, 0.929, 0.882);",
-                "  vec3 fold     = vec3(0.886, 0.837, 0.741);",
-                "  vec3 blush    = vec3(0.914, 0.845, 0.786);",
-                "  vec3 champagne= vec3(0.845, 0.720, 0.510);",
+                "  // warm gold paper -> deeper amber folds -> vivid champagne sheen",
+                "  vec3 paper    = vec3(0.973, 0.918, 0.816);",
+                "  vec3 fold     = vec3(0.906, 0.792, 0.565);",
+                "  vec3 blush    = vec3(0.945, 0.812, 0.612);",
+                "  vec3 champagne= vec3(0.878, 0.635, 0.180);",
                 "",
                 "  vec3 col = mix(paper, fold, smoothstep(0.25, 0.75, f));",
-                "  col = mix(col, blush, smoothstep(0.55, 0.95, fbm(p * 1.3 - q + t)) * 0.35);",
+                "  col = mix(col, blush, smoothstep(0.55, 0.95, fbm(p * 1.3 - q + t)) * 0.42);",
                 "  float sheen = pow(smoothstep(0.45, 0.85, f), 3.0);",
-                "  col = mix(col, champagne, sheen * 0.5);",
+                "  col = mix(col, champagne, sheen * 0.6);",
                 "",
                 "  // vignette keeps the type legible",
                 "  float vig = smoothstep(1.25, 0.35, distance(uv, vec2(0.5, 0.52)));",
@@ -474,12 +474,28 @@
 
         $$("[data-reveal-lines]").forEach(container => {
             const inners = wrapLines(container);
+            const accents = $$("em", container);
             gsap.fromTo(inners,
                 { yPercent: 110 },
                 {
                     yPercent: 0, duration: 1.2, ease: "power4.out", stagger: 0.12,
-                    scrollTrigger: { trigger: container, start: "top 86%", once: true }
+                    scrollTrigger: {
+                        trigger: container, start: "top 86%", once: true,
+                        onEnter: () => runSheen(accents, 0.55)
+                    }
                 });
+        });
+    }
+
+    // Replay the gold sheen sweep across accent words once they've revealed.
+    function runSheen(accents, delay) {
+        if (!accents || !accents.length || reducedMotion) return;
+        gsap.delayedCall(delay || 0, () => {
+            accents.forEach(em => {
+                em.classList.remove("sheen-run");
+                void em.offsetWidth; // restart the CSS animation
+                em.classList.add("sheen-run");
+            });
         });
     }
 
@@ -633,7 +649,7 @@
         const rect = originEl.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
-        const colors = ["#a0742c", "#b99150", "#f3ede1", "#d9b98a", "#8a5a25"];
+        const colors = ["#cf8a0e", "#eab13c", "#f8ead0", "#e0a828", "#a5620a"];
         for (let i = 0; i < 56; i++) {
             const piece = document.createElement("span");
             piece.className = "confetti-piece";
@@ -1000,6 +1016,73 @@
     }
 
     // ============================================================
+    // MAGNETIC BUTTONS — primary CTAs lean toward the cursor
+    // ============================================================
+    function initMagnetic() {
+        if (!finePointer || reducedMotion || !hasGSAP) return;
+        const STRENGTH = 0.32;
+        $$(".nav-rsvp-btn, .rsvp-submit, .modal-btn, .admin-trigger").forEach(el => {
+            const xTo = gsap.quickTo(el, "x", { duration: 0.55, ease: "power3.out" });
+            const yTo = gsap.quickTo(el, "y", { duration: 0.55, ease: "power3.out" });
+            el.addEventListener("mousemove", (e) => {
+                const r = el.getBoundingClientRect();
+                xTo((e.clientX - (r.left + r.width / 2)) * STRENGTH);
+                yTo((e.clientY - (r.top + r.height / 2)) * STRENGTH);
+            });
+            el.addEventListener("mouseleave", () => { xTo(0); yTo(0); });
+        });
+    }
+
+    // ============================================================
+    // SCROLL-VELOCITY SKEW — headings & photos flex with scroll speed
+    // ============================================================
+    function initScrollSkew() {
+        if (!hasGSAP || !hasLenis || reducedMotion || !lenis) return;
+        const setters = $$(".section-title, .gallery-img-wrap").map(el => {
+            el.style.willChange = "transform";
+            return gsap.quickSetter(el, "skewY", "deg");
+        });
+        if (!setters.length) return;
+        const clamp = gsap.utils.clamp(-6, 6);
+        let current = 0;
+        gsap.ticker.add(() => {
+            const target = clamp((lenis.velocity || 0) * 0.32);
+            current += (target - current) * 0.1;
+            if (Math.abs(current) < 0.001) current = 0;
+            setters.forEach(set => set(current));
+        });
+    }
+
+    // ============================================================
+    // IMAGE DEPTH — pointer-driven 3D tilt + in-frame parallax
+    // ============================================================
+    function initImageDepth() {
+        if (!finePointer || reducedMotion || !hasGSAP) return;
+        $$(".gallery-item").forEach(item => {
+            const wrap = $(".gallery-img-wrap", item);
+            const img = wrap && $("img", wrap);
+            if (!wrap || !img) return;
+            // img rests at scale(1.08) (CSS) — enough overflow for in-frame parallax
+            const rotX = gsap.quickTo(wrap, "rotationX", { duration: 0.5, ease: "power3.out" });
+            const rotY = gsap.quickTo(wrap, "rotationY", { duration: 0.5, ease: "power3.out" });
+            const imgX = gsap.quickTo(img, "xPercent", { duration: 0.6, ease: "power3.out" });
+            const imgY = gsap.quickTo(img, "yPercent", { duration: 0.6, ease: "power3.out" });
+            item.addEventListener("mousemove", (e) => {
+                const r = wrap.getBoundingClientRect();
+                const px = (e.clientX - r.left) / r.width - 0.5;
+                const py = (e.clientY - r.top) / r.height - 0.5;
+                rotY(px * 10);
+                rotX(-py * 10);
+                imgX(-px * 6);
+                imgY(-py * 6);
+            });
+            item.addEventListener("mouseleave", () => {
+                rotX(0); rotY(0); imgX(0); imgY(0);
+            });
+        });
+    }
+
+    // ============================================================
     // AMBIENT MUSIC — soft WebAudio piano arpeggios
     // ============================================================
     const musicToggle = $("#music-toggle");
@@ -1101,6 +1184,9 @@
     initReveals();
     initGallery();
     initCursor();
+    initMagnetic();
+    initScrollSkew();
+    initImageDepth();
     runPreloader();
 
     if (hasScrollTrigger) {
