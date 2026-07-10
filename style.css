@@ -6,16 +6,16 @@
    ============================================================ */
 
 :root {
-    --paper: #f3ede1;
-    --paper-2: #ebe3d2;
-    --ink: #211d16;
-    --ink-2: #171410;
-    --ink-soft: #6c6355;
-    --bronze: #a0742c;
-    --bronze-soft: #b99150;
-    --line: rgba(33, 29, 22, 0.16);
-    --line-strong: rgba(33, 29, 22, 0.4);
-    --line-dark: rgba(243, 237, 225, 0.18);
+    --paper: #f8ead0;
+    --paper-2: #f1ddb4;
+    --ink: #2a1a06;
+    --ink-2: #1a1103;
+    --ink-soft: #7d5a28;
+    --bronze: #cf8a0e;
+    --bronze-soft: #eab13c;
+    --line: rgba(42, 26, 6, 0.18);
+    --line-strong: rgba(42, 26, 6, 0.42);
+    --line-dark: rgba(248, 234, 208, 0.2);
 
     --font-serif: "Fraunces", "Georgia", serif;
     --font-sans: "Manrope", "Helvetica Neue", Arial, sans-serif;
@@ -278,8 +278,8 @@ body.cursor-hover #cursor-ring {
 }
 
 .nav-rsvp-btn:hover {
-    background: #f5f0e6;
-    color: #0a0a0a;
+    background: var(--paper);
+    color: var(--ink-2);
 }
 
 .menu-toggle {
@@ -675,6 +675,45 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     font-weight: 300;
 }
 
+/* Gold sheen sweep across italic accent words (progressive enhancement) */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+
+    .section-title em,
+    .display-title em,
+    .rsvp-title em {
+        background-image: linear-gradient(100deg,
+                var(--bronze) 0%,
+                var(--bronze) 34%,
+                #fff2cf 47%,
+                var(--bronze-soft) 56%,
+                var(--bronze) 70%,
+                var(--bronze) 100%);
+        background-size: 250% 100%;
+        background-position: 100% 0;
+        background-repeat: no-repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    .section-title em.sheen-run,
+    .display-title em.sheen-run,
+    .rsvp-title em.sheen-run {
+        animation: accent-sheen 1.5s var(--ease-out) both;
+    }
+}
+
+@keyframes accent-sheen {
+    from {
+        background-position: 100% 0;
+    }
+
+    to {
+        background-position: -45% 0;
+    }
+}
+
 .dt-line {
     display: block;
     overflow: hidden;
@@ -889,6 +928,7 @@ body.menu-open .menu-toggle .menu-bar:last-child {
 .gallery-item {
     flex-shrink: 0;
     width: clamp(240px, 30vw, 460px);
+    perspective: 1100px;
 }
 
 .gallery-item:nth-child(even) {
@@ -899,6 +939,8 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     overflow: hidden;
     aspect-ratio: 3 / 4;
     background: var(--paper-2);
+    transform-style: preserve-3d;
+    will-change: transform;
 }
 
 .gallery-img-wrap img {
@@ -1507,61 +1549,6 @@ body.menu-open .menu-toggle .menu-bar:last-child {
 }
 
 /* ============================================================
-   REGISTRY
-   ============================================================ */
-.registry {
-    background: var(--paper-2);
-}
-
-.registry-intro {
-    max-width: 52ch;
-    color: var(--ink-soft);
-    margin-bottom: clamp(2.5rem, 6vh, 4rem);
-    font-size: 1rem;
-    line-height: 1.8;
-}
-
-.registry-list {
-    max-width: 1400px;
-    margin: 0 auto;
-    border-top: 1px solid var(--line);
-}
-
-.registry-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: clamp(1.6rem, 4vh, 2.4rem) 0;
-    border-bottom: 1px solid var(--line);
-    transition: padding-left 0.5s var(--ease-out);
-}
-
-.registry-row:hover {
-    padding-left: 1.2rem;
-}
-
-.registry-name {
-    font-family: var(--font-serif);
-    font-weight: 340;
-    font-size: clamp(1.5rem, 3.5vw, 2.6rem);
-    transition: color 0.4s;
-}
-
-.registry-row:hover .registry-name {
-    color: var(--bronze);
-}
-
-.registry-arrow svg {
-    width: clamp(20px, 3vw, 30px);
-    height: clamp(20px, 3vw, 30px);
-    transition: transform 0.45s var(--ease-out);
-}
-
-.registry-row:hover .registry-arrow svg {
-    transform: translate(4px, -4px);
-}
-
-/* ============================================================
    FOOTER — transparent, silk shows through again
    ============================================================ */
 .footer {
@@ -1569,8 +1556,8 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     text-align: center;
     padding: clamp(6rem, 18vh, 11rem) var(--pad-x) clamp(1.6rem, 4vh, 2.6rem);
     /* mostly transparent to reveal the fixed silk canvas; the gradient
-       dissolves the hard edge against the registry section above */
-    background: linear-gradient(180deg, var(--paper-2) 0%, rgba(235, 227, 210, 0) 26%);
+       dissolves the hard edge against the guestbook section above */
+    background: linear-gradient(180deg, var(--paper) 0%, rgba(248, 234, 208, 0) 26%);
 }
 
 .footer-eyebrow {
@@ -2077,5 +2064,13 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     .cue-line::after {
         animation: none;
         top: 0;
+    }
+
+    /* accent words rest as static gold; no sheen sweep */
+    .section-title em,
+    .display-title em,
+    .rsvp-title em {
+        animation: none !important;
+        background-position: 0 0;
     }
 }
