@@ -37,9 +37,9 @@ const WEDDING_CONFIG = {
         reception: {
             title: "Grand Reception",
             time: "Thursday, 7:00 PM – 11:00 PM",
-            venue: "Details to be announced",
-            address: "New Delhi, India",
-            mapLink: "https://maps.google.com/maps?q=New+Delhi,+India",
+            venue: "Cathedral Church of The Redemption",
+            address: "1 Church Road, North Avenue, New Delhi 110001",
+            mapLink: "https://maps.google.com/maps?q=Cathedral+Church+of+The+Redemption+1+Church+Road+North+Avenue+New+Delhi+110001",
             startISO: "2026-09-24T19:00:00",
             endISO: "2026-09-24T23:00:00"
         }
