@@ -509,7 +509,8 @@
             const track = $("#gallery-track");
             const pin = $("#gallery-pin");
             if (!track || !pin) return;
-            const distance = () => track.scrollWidth - window.innerWidth + 80;
+            // clamp: with few items the track can be narrower than the viewport
+            const distance = () => Math.max(0, track.scrollWidth - window.innerWidth + 80);
             const tween = gsap.to(track, {
                 x: () => -distance(),
                 ease: "none",

@@ -695,6 +695,14 @@ body.menu-open .menu-toggle .menu-bar:last-child {
         background-clip: text;
         -webkit-text-fill-color: transparent;
         color: transparent;
+        /* background-clip: text only paints ink inside the padding box, and
+           italic Fraunces glyphs overhang it — the "j" swash reaches left of
+           the box's start edge, the "?" leans past its end, descenders drop
+           below it — so those strokes vanished. Pad the box out past the
+           overhangs; negative side margins cancel the layout shift (vertical
+           padding doesn't affect inline layout, so it needs no compensation). */
+        padding: 0.15em 0.25em 0.35em;
+        margin: 0 -0.25em;
     }
 
     .section-title em.sheen-run,
@@ -717,11 +725,14 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     }
 }
 
+/* Side padding keeps the reveal mask from shearing italic overhangs — the
+   "j" swash starts left of the text origin and the "?" leans past the line's
+   end — while the negative side margins cancel the layout shift. */
 .dt-line {
     display: block;
     overflow: hidden;
-    padding-bottom: 0.1em;
-    margin-bottom: -0.1em;
+    padding: 0 0.25em 0.1em;
+    margin: 0 -0.25em -0.1em;
 }
 
 /* The reveal mask (overflow: hidden) clips whatever dips below the line box.
