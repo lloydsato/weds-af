@@ -12,6 +12,8 @@
     <!-- Typography: Fraunces (editorial display serif) + Manrope (grotesque sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@300..700&display=swap"
         rel="stylesheet">
@@ -218,13 +220,15 @@
                 <div class="gallery-track" id="gallery-track">
                     <figure class="gallery-item" data-index="0">
                         <div class="gallery-img-wrap">
-                            <img src="images/shining-star-01.jpg" alt="Her smile" loading="lazy">
+                            <img src="images/shining-star-01.jpg" alt="Her smile" loading="lazy" decoding="async"
+                                width="1152" height="2048">
                         </div>
                         <figcaption><span>01</span> Her smile</figcaption>
                     </figure>
                     <figure class="gallery-item" data-index="1">
                         <div class="gallery-img-wrap">
-                            <img src="images/shining-star-02.jpg" alt="By the sea" loading="lazy">
+                            <img src="images/shining-star-02.jpg" alt="By the sea" loading="lazy" decoding="async"
+                                width="960" height="1280">
                         </div>
                         <figcaption><span>02</span> By the sea</figcaption>
                     </figure>
@@ -413,18 +417,19 @@
             </div>
         </section>
 
-        <!-- FOOTER -->
-        <footer class="footer">
-            <p class="footer-eyebrow">See you there</p>
-            <p class="footer-names" aria-hidden="true"><span data-bind="groomName">Maschio</span><em>&amp;</em><span
-                    data-bind="brideName">Ann Sweety</span></p>
-            <p class="footer-meta"><span data-bind="weddingDateText">September 24, 2026</span> · New Delhi, India</p>
-            <div class="footer-bottom">
-                <p>Made with love</p>
-                <button type="button" class="admin-trigger" id="admin-trigger">Guest list</button>
-            </div>
-        </footer>
     </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p class="footer-eyebrow">See you there</p>
+        <p class="footer-names" aria-hidden="true"><span data-bind="groomName">Maschio</span><em>&amp;</em><span
+                data-bind="brideName">Ann Sweety</span></p>
+        <p class="footer-meta"><span data-bind="weddingDateText">September 24, 2026</span> · New Delhi, India</p>
+        <div class="footer-bottom">
+            <p>Made with love</p>
+            <button type="button" class="admin-trigger" id="admin-trigger">Guest list</button>
+        </div>
+    </footer>
 
     <!-- LIGHTBOX -->
     <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Photo viewer">
@@ -508,13 +513,36 @@
         </div>
     </div>
 
-    <!-- Libraries: GSAP + ScrollTrigger, Lenis smooth scroll, Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Libraries: GSAP + ScrollTrigger, Lenis smooth scroll, Three.js.
+         SRI-pinned; if any fails to load the page degrades to a static,
+         fully readable document (script.js feature-detects each one). -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+        integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+        integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"
+        integrity="sha384-tKsJDT6PlUI0pSBt9/sBKJluKgA19/a6mBrDsZaXotLB4ZYfMGM6xt6/WgGpYhTm"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+        integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src="script.js"></script>
+
+    <!-- Failsafe: if script.js never boots (e.g. it failed to download on a
+         flaky connection), remove the opaque preloader curtain so the page
+         is never left permanently covered. -->
+    <script>
+        setTimeout(function () {
+            if (!window.__weddingBooted) {
+                var p = document.getElementById("preloader");
+                if (p) p.style.display = "none";
+                document.body.classList.remove("no-scroll");
+            }
+        }, 6000);
+    </script>
 </body>
 
 </html>

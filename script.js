@@ -88,6 +88,10 @@
 
         if (config.groomName) $("#hero-name-groom").textContent = config.groomName;
         if (config.brideName) $("#hero-name-bride").textContent = config.brideName;
+        if (config.groomName && config.brideName) {
+            const heroTitle = $(".hero-title");
+            if (heroTitle) heroTitle.setAttribute("aria-label", config.groomName + " and " + config.brideName);
+        }
 
         ["ceremony", "reception"].forEach(key => {
             const evt = config.events && config.events[key];
@@ -541,24 +545,31 @@
         const img = $("img", fig);
         const cap = $("figcaption", fig);
         return {
-            src: img.src.replace(/w=900/, "w=1600"),
+            src: img.src,
             alt: img.alt,
             caption: cap ? cap.textContent.trim() : ""
         };
     });
 
+    let lightboxReturnFocus = null;
+
     function openLightbox(index) {
         lightboxIndex = index;
         updateLightbox();
+        lightboxReturnFocus = document.activeElement;
         lightbox.classList.add("open");
         lightbox.setAttribute("aria-hidden", "false");
         scrollLock(true);
+        // deferred: the overlay is still visibility:hidden in the frame the
+        // class lands, and focus() on a hidden element is silently refused
+        setTimeout(() => $("#lightbox-close").focus(), 60);
     }
 
     function closeLightbox() {
         lightbox.classList.remove("open");
         lightbox.setAttribute("aria-hidden", "true");
         scrollLock(false);
+        if (lightboxReturnFocus && document.contains(lightboxReturnFocus)) lightboxReturnFocus.focus();
     }
 
     function stepLightbox(dir) {
@@ -574,7 +585,18 @@
     }
 
     galleryFigures.forEach((fig, i) => {
-        $("img", fig).addEventListener("click", () => openLightbox(i));
+        // the whole frame opens the lightbox, and is keyboard-operable
+        const wrap = $(".gallery-img-wrap", fig);
+        wrap.setAttribute("role", "button");
+        wrap.setAttribute("tabindex", "0");
+        wrap.setAttribute("aria-label", "View photo: " + photos[i].alt);
+        wrap.addEventListener("click", () => openLightbox(i));
+        wrap.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openLightbox(i);
+            }
+        });
     });
     $("#lightbox-close").addEventListener("click", closeLightbox);
     $("#lightbox-prev").addEventListener("click", () => stepLightbox(-1));
@@ -590,7 +612,7 @@
             minutes: $("#cd-minutes"), seconds: $("#cd-seconds")
         };
         if (!els.days) return;
-        const target = new Date(config.countdownTarget || "2026-09-24T16:00:00").getTime();
+        const target = new Date(config.countdownTarget || "2026-09-24T16:00:00+05:30").getTime();
 
         function setVal(el, val, pad) {
             const str = String(val).padStart(pad, "0");
@@ -769,8 +791,12 @@
         modal.classList.add("open");
         modal.setAttribute("aria-hidden", "false");
         scrollLock(true);
-        const focusable = $("button, a, input, [tabindex]", modal);
-        if (focusable) focusable.focus();
+        // deferred: the overlay is still visibility:hidden in the frame the
+        // class lands, and focus() on a hidden element is silently refused
+        setTimeout(() => {
+            const focusable = $("button, a, input, [tabindex]", modal);
+            if (focusable) focusable.focus();
+        }, 60);
     }
 
     function closeModal(modal) {
@@ -801,8 +827,10 @@
         if (!evt) return;
 
         const title = (config.groomName || "") + " and " + (config.brideName || "") + " — " + evt.title;
-        const startDate = evt.startISO.replace(/[-:]/g, "");
-        const endDate = evt.endISO.replace(/[-:]/g, "");
+        // "2026-09-24T16:00:00" -> "20260924T160000" (floating venue-local
+        // time; slice guards against a stray UTC offset in the config value)
+        const startDate = evt.startISO.replace(/[-:]/g, "").slice(0, 15);
+        const endDate = evt.endISO.replace(/[-:]/g, "").slice(0, 15);
 
         const ics = [
             "BEGIN:VCALENDAR",
@@ -880,7 +908,13 @@
 
     $("#export-csv-btn").addEventListener("click", () => {
         const list = getRSVPs();
-        const quote = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""').replace(/\r?\n/g, " ") + '"';
+        const quote = (v) => {
+            let s = String(v == null ? "" : v).replace(/"/g, '""').replace(/\r?\n/g, " ");
+            // guests type their own names/wishes: neutralise spreadsheet
+            // formula injection ("=cmd()", "+…", "-…", "@…") on export
+            if (/^[=+\-@]/.test(s)) s = "'" + s;
+            return '"' + s + '"';
+        };
         let csv = "\uFEFFGuest Name,Email,Attending,Guests,Dietary Preference,Wishes,Timestamp\r\n";
         list.forEach(r => {
             const attendingRow = r.attendance === "attending";
@@ -967,6 +1001,27 @@
     // ============================================================
     // GLOBAL KEYBOARD
     // ============================================================
+    // keep Tab inside whichever overlay (modal / lightbox) is open
+    function trapFocus(container, e) {
+        const focusables = $$(
+            'button, a[href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])',
+            container
+        ).filter(el => el.offsetParent !== null || container === lightbox);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        } else if (!container.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
             if (lightbox.classList.contains("open")) closeLightbox();
@@ -976,6 +1031,10 @@
         if (lightbox.classList.contains("open")) {
             if (e.key === "ArrowLeft") stepLightbox(-1);
             if (e.key === "ArrowRight") stepLightbox(1);
+        }
+        if (e.key === "Tab") {
+            const openOverlay = $(".modal.open") || (lightbox.classList.contains("open") ? lightbox : null);
+            if (openOverlay) trapFocus(openOverlay, e);
         }
     });
 
@@ -1189,6 +1248,10 @@
     initScrollSkew();
     initImageDepth();
     runPreloader();
+
+    // disarms the preloader failsafe in index.html — only once the whole
+    // boot sequence (including preloader dismissal) has been scheduled
+    window.__weddingBooted = true;
 
     if (hasScrollTrigger) {
         window.addEventListener("load", () => ScrollTrigger.refresh());

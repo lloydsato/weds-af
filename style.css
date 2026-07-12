@@ -287,8 +287,8 @@ body.cursor-hover #cursor-ring {
     flex-direction: column;
     justify-content: center;
     gap: 6px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     align-items: center;
 }
 
@@ -967,6 +967,7 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     background: var(--paper-2);
     transform-style: preserve-3d;
     will-change: transform;
+    cursor: zoom-in;
 }
 
 .gallery-img-wrap img {
@@ -975,7 +976,6 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     object-fit: cover;
     transform: scale(1.08);
     transition: transform 1.2s var(--ease-out);
-    cursor: zoom-in;
 }
 
 .gallery-item:hover .gallery-img-wrap img {
@@ -1539,6 +1539,7 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     font-size: clamp(1.05rem, 2vw, 1.25rem);
     line-height: 1.55;
     margin-bottom: 1.4rem;
+    overflow-wrap: anywhere;
 }
 
 .wish-author {
@@ -1546,6 +1547,7 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     font-weight: 700;
     letter-spacing: 0.24em;
     text-transform: uppercase;
+    overflow-wrap: anywhere;
 }
 
 .wish-date {
@@ -1634,6 +1636,9 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ink-soft);
+    /* the fixed music toggle floats over the bottom-right corner; keep the
+       "Guest list" trigger clear of it */
+    padding-right: calc(clamp(1rem, 3vw, 2rem) + 64px);
 }
 
 .admin-trigger {
@@ -1934,10 +1939,12 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     padding: 0.85rem 1rem;
     border-bottom: 1px solid var(--line);
     vertical-align: top;
+    overflow-wrap: anywhere;
 }
 
 .admin-table td.wish-cell {
     max-width: 240px;
+    min-width: 160px;
 }
 
 .pill {
@@ -2048,6 +2055,9 @@ body.menu-open .menu-toggle .menu-bar:last-child {
     .footer-bottom {
         flex-direction: column;
         gap: 0.8rem;
+        /* stacked + centered: clear the music toggle below, not beside */
+        padding-right: 0;
+        padding-bottom: calc(clamp(1rem, 3vw, 2rem) + 52px);
     }
 
     .admin-actions {
@@ -2062,6 +2072,36 @@ body.menu-open .menu-toggle .menu-bar:last-child {
 
     .lightbox-nav.next {
         right: 0.4rem;
+    }
+}
+
+/* Short landscape viewports (phones held sideways): the full-size display
+   type and tall paddings overflow a ~360px-high screen, so scale the hero
+   down and drop the scroll cue. */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        padding-top: clamp(4.5rem, 14vh, 6rem);
+        padding-bottom: 3rem;
+    }
+
+    .hero-title {
+        font-size: clamp(2.4rem, 9vh, 5rem);
+    }
+
+    .hero-eyebrow {
+        margin-bottom: 1rem;
+    }
+
+    .hero-meta {
+        margin-top: 1.2rem;
+    }
+
+    .hero-scroll-cue {
+        display: none;
+    }
+
+    .menu-link {
+        font-size: clamp(1.4rem, 9vh, 2.4rem);
     }
 }
 
