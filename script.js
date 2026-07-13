@@ -6,8 +6,13 @@
              scroll), Three.js (flowing silk shader + drifting
              champagne dust behind the hero and footer).
    Data:     window.WEDDING_CONFIG (config.js) drives all copy.
-             RSVPs persist to localStorage and, optionally, to a
-             webhook (config.rsvpWebhookUrl).
+             RSVPs persist to localStorage and, when a backend is
+             configured (config.backendUrl → Google Apps Script +
+             Google Sheet, see BACKEND_SETUP.md), are delivered to
+             the couple's private sheet. The footer "Guest list"
+             dashboard is passcode-protected — verified server-side
+             in backend mode — and exports to Excel (.xlsx, built-in
+             writer, no libraries) or CSV.
 
    Everything degrades gracefully: if a CDN library or WebGL is
    unavailable the page stays a fully readable, working document.
@@ -70,6 +75,42 @@
     if (getRSVPs().length === 0) saveRSVPs(DEFAULT_WISHES);
 
     // ============================================================
+    // BACKEND CLIENT (Google Apps Script web app — BACKEND_SETUP.md)
+    // ============================================================
+    function backendUrl() {
+        const url = String(config.backendUrl || "").trim();
+        return /^https:\/\//.test(url) ? url : "";
+    }
+
+    function backendPost(payload) {
+        const controller = "AbortController" in window ? new AbortController() : null;
+        const timer = controller ? setTimeout(() => controller.abort(), 15000) : null;
+        return fetch(backendUrl(), {
+            method: "POST",
+            // text/plain keeps this a "simple" CORS request (no preflight),
+            // which is the only kind Apps Script web apps can answer
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload),
+            signal: controller ? controller.signal : undefined
+        }).then(res => {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+        }).finally(() => {
+            if (timer) clearTimeout(timer);
+        });
+    }
+
+    function downloadBlob(blob, filename) {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(link.href), 4000);
+    }
+
+    // ============================================================
     // CONTENT FROM CONFIG
     // ============================================================
     function populateContent() {
@@ -114,7 +155,10 @@
             }
         });
 
-        if (config.rsvpWebhookUrl) {
+        const formHint = $("#rsvp-form-hint");
+        if (formHint && backendUrl()) {
+            formHint.textContent = "Responses are delivered securely to the couple's guest list.";
+        } else if (config.rsvpWebhookUrl) {
             const hint = $("#webhook-hint");
             if (hint) hint.textContent = " and delivered to the couple";
         }
@@ -705,9 +749,11 @@
         }
     }
 
+    let rsvpSending = false;
+
     rsvpForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        if (!rsvpForm.reportValidity()) return;
+        if (rsvpSending || !rsvpForm.reportValidity()) return;
 
         const name = $("#guest-name").value.trim();
         const email = $("#guest-email").value.trim();
@@ -728,11 +774,12 @@
             wishes, timestamp
         };
 
+        // always keep a copy on this device (drives the wish wall + local mode)
         const list = getRSVPs();
         list.push(entry);
         const saved = saveRSVPs(list);
 
-        // best-effort off-device delivery so the couple actually receives it
+        // optional generic webhook copy (email notification services etc.)
         if (config.rsvpWebhookUrl) {
             fetch(config.rsvpWebhookUrl, {
                 method: "POST",
@@ -741,23 +788,54 @@
             }).catch(() => { /* non-blocking: still saved locally */ });
         }
 
-        renderWishes();
-        launchConfetti($(".rsvp-submit"));
+        const finishSubmit = (delivered) => {
+            renderWishes();
+            launchConfetti($(".rsvp-submit"));
 
-        const msg = $("#rsvp-success-msg");
-        if (!saved) {
-            msg.textContent = name + ", we couldn't save your RSVP on this device (your browser may be blocking storage). Please try again or reach out to us directly.";
-        } else if (attendance === "attending") {
-            msg.textContent = name + ", your acceptance has been joyfully received. We can't wait to celebrate with you!";
-        } else {
-            msg.textContent = name + ", thank you for letting us know. You will be missed, but we treasure your warm thoughts.";
+            const msg = $("#rsvp-success-msg");
+            if (delivered === "failed") {
+                msg.textContent = name + ", we couldn't reach the guest list right now, so your RSVP is saved on this device only. Please try again in a little while, or reach out to us directly.";
+            } else if (!saved && delivered !== "delivered") {
+                msg.textContent = name + ", we couldn't save your RSVP on this device (your browser may be blocking storage). Please try again or reach out to us directly.";
+            } else if (attendance === "attending") {
+                msg.textContent = name + ", your acceptance has been joyfully received. We can't wait to celebrate with you!";
+            } else {
+                msg.textContent = name + ", thank you for letting us know. You will be missed, but we treasure your warm thoughts.";
+            }
+            openModal($("#rsvp-modal"));
+
+            rsvpForm.reset();
+            guestCount = 1;
+            refreshStepper();
+            detailsBlock.classList.remove("collapsed");
+        };
+
+        if (!backendUrl()) {
+            finishSubmit("local");
+            return;
         }
-        openModal($("#rsvp-modal"));
 
-        rsvpForm.reset();
-        guestCount = 1;
-        refreshStepper();
-        detailsBlock.classList.remove("collapsed");
+        // deliver to the couple's Google Sheet, with a visible sending state
+        const submitBtn = $(".rsvp-submit");
+        const submitLabel = $(".rsvp-submit-label");
+        const restore = () => {
+            rsvpSending = false;
+            submitBtn.disabled = false;
+            submitLabel.textContent = "Send my answer";
+        };
+        rsvpSending = true;
+        submitBtn.disabled = true;
+        submitLabel.textContent = "Sending…";
+
+        backendPost({ action: "rsvp", name: entry.name, email: entry.email, attendance: entry.attendance, guests: entry.guests, diet: entry.diet, wishes: entry.wishes, timestamp: entry.timestamp })
+            .then(data => {
+                restore();
+                finishSubmit(data && data.ok ? "delivered" : "failed");
+            })
+            .catch(() => {
+                restore();
+                finishSubmit("failed");
+            });
     });
 
     // ============================================================
@@ -794,7 +872,9 @@
         // deferred: the overlay is still visibility:hidden in the frame the
         // class lands, and focus() on a hidden element is silently refused
         setTimeout(() => {
-            const focusable = $("button, a, input, [tabindex]", modal);
+            let focusable = $("[data-autofocus]", modal);
+            if (focusable && focusable.offsetParent === null) focusable = null; // hidden
+            if (!focusable) focusable = $("button, a, input, [tabindex]", modal);
             if (focusable) focusable.focus();
         }, 60);
     }
@@ -858,47 +938,177 @@
     };
 
     // ============================================================
-    // ADMIN DASHBOARD
+    // ADMIN DASHBOARD (passcode-protected guest list)
+    //
+    // Backend mode (config.backendUrl set): the passcode is sent to the
+    // Google Apps Script backend, verified on Google's servers, and the
+    // full guest list (all guests, all devices) comes back with it.
+    // Local mode (no backendUrl): falls back to the on-device list and
+    // the config.adminPasscode check (demo only — see config.js).
     // ============================================================
     const adminModal = $("#admin-modal");
+    const adminLockForm = $("#admin-lock");
+    const adminLockError = $("#admin-lock-error");
+    const adminPasscodeInput = $("#admin-passcode");
+    const adminUnlockBtn = $("#admin-unlock-btn");
+    const adminDashboard = $("#admin-dashboard");
+    const adminSource = $("#admin-source");
+    const adminRefreshBtn = $("#admin-refresh-btn");
+    const clearBtn = $("#clear-rsvps-btn");
+
+    let adminUnlocked = false;   // survives modal close, resets on page reload
+    let adminKey = "";           // passcode kept in memory only, for refreshes
+    let adminData = [];          // the rows currently shown (drives exports)
+
+    const ADMIN_COLUMNS = ["Guest Name", "Email", "Attending", "Guests", "Dietary Preference", "Wishes", "Timestamp"];
+
+    // one RSVP object → one flat export row (shared by Excel and CSV)
+    function adminRow(r) {
+        const attending = r.attendance === "attending";
+        return [
+            r.name, r.email,
+            attending ? "Yes" : "No",
+            attending ? (parseInt(r.guests, 10) || 0) : 0,
+            attending ? (r.diet || "none") : "N/A",
+            r.wishes || "", r.timestamp || ""
+        ];
+    }
 
     $("#admin-trigger").addEventListener("click", () => {
-        const code = prompt("Enter the guest-list passcode:");
-        if (code === null) return;
-        if (code === (config.adminPasscode || "2026")) {
-            renderAdmin();
-            openModal(adminModal);
+        if (adminUnlocked) {
+            showAdminDashboard();
+            if (backendUrl()) refreshAdminData(); // re-sync on reopen
         } else {
-            alert("Incorrect passcode.");
+            showAdminLock();
         }
+        openModal(adminModal);
     });
 
     $("#admin-close").addEventListener("click", () => closeModal(adminModal));
 
-    function renderAdmin() {
-        const list = getRSVPs();
-        const attending = list.filter(r => r.attendance === "attending");
+    function showAdminLock() {
+        adminLockForm.hidden = false;
+        adminDashboard.hidden = true;
+        adminLockError.hidden = true;
+        adminPasscodeInput.value = "";
+    }
+
+    function showAdminDashboard() {
+        adminLockForm.hidden = true;
+        adminDashboard.hidden = false;
+    }
+
+    function setLockBusy(busy) {
+        adminUnlockBtn.disabled = busy;
+        adminUnlockBtn.textContent = busy ? "Checking…" : "Unlock";
+    }
+
+    function lockFail(message) {
+        adminLockError.textContent = message;
+        adminLockError.hidden = false;
+        adminPasscodeInput.select();
+    }
+
+    adminLockForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const code = adminPasscodeInput.value;
+        if (!code) {
+            lockFail("Please enter the passcode.");
+            return;
+        }
+
+        if (!backendUrl()) {
+            // local demo mode: client-side check (see note in config.js)
+            if (code === (config.adminPasscode || "2026")) {
+                adminUnlocked = true;
+                renderAdmin(getRSVPs(), "local");
+                showAdminDashboard();
+            } else {
+                lockFail("Incorrect passcode.");
+            }
+            return;
+        }
+
+        setLockBusy(true);
+        backendPost({ action: "list", passcode: code })
+            .then(data => {
+                setLockBusy(false);
+                if (data && data.ok) {
+                    adminUnlocked = true;
+                    adminKey = code;
+                    renderAdmin(data.entries || [], "server");
+                    showAdminDashboard();
+                } else if (data && data.error === "unauthorized") {
+                    lockFail("Incorrect passcode.");
+                } else {
+                    lockFail("The guest-list service returned an error. Please try again.");
+                }
+            })
+            .catch(() => {
+                setLockBusy(false);
+                lockFail("Couldn't reach the guest-list service. Check your connection and try again.");
+            });
+    });
+
+    function refreshAdminData() {
+        if (!backendUrl() || !adminKey) return;
+        adminRefreshBtn.disabled = true;
+        backendPost({ action: "list", passcode: adminKey })
+            .then(data => {
+                adminRefreshBtn.disabled = false;
+                if (data && data.ok) {
+                    renderAdmin(data.entries || [], "server");
+                } else if (data && data.error === "unauthorized") {
+                    // passcode was changed on the server: lock again
+                    adminUnlocked = false;
+                    adminKey = "";
+                    showAdminLock();
+                    lockFail("The passcode has changed. Please enter the new one.");
+                }
+            })
+            .catch(() => { adminRefreshBtn.disabled = false; });
+    }
+
+    adminRefreshBtn.addEventListener("click", refreshAdminData);
+
+    function renderAdmin(list, source) {
+        adminData = Array.isArray(list) ? list : [];
+
+        if (source === "server") {
+            adminSource.textContent = "Live · synced from your Google Sheet";
+            adminSource.classList.add("live");
+            adminRefreshBtn.hidden = false;
+            // the Sheet is the source of truth; delete rows there instead
+            clearBtn.hidden = true;
+        } else {
+            adminSource.textContent = "This device only — see BACKEND_SETUP.md for the full guest list";
+            adminSource.classList.remove("live");
+            adminRefreshBtn.hidden = true;
+            clearBtn.hidden = false;
+        }
+
+        const attending = adminData.filter(r => r.attendance === "attending");
         const totalGuests = attending.reduce((sum, r) => sum + (parseInt(r.guests, 10) || 0), 0);
 
         $("#admin-stats").innerHTML = [
-            { num: list.length, label: "Responses" },
+            { num: adminData.length, label: "Responses" },
             { num: attending.length, label: "Accepted" },
             { num: totalGuests, label: "Total guests" },
-            { num: list.length - attending.length, label: "Declined" }
+            { num: adminData.length - attending.length, label: "Declined" }
         ].map(s => '<div class="stat-tile"><p class="stat-num">' + s.num + '</p><p class="stat-label">' + s.label + '</p></div>').join("");
 
         const tbody = $("#rsvp-table-body");
-        if (list.length === 0) {
+        if (adminData.length === 0) {
             tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No RSVPs yet.</td></tr>';
             return;
         }
-        tbody.innerHTML = list.map(entry => {
+        tbody.innerHTML = adminData.map(entry => {
             const attendingRow = entry.attendance === "attending";
             return "<tr>" +
                 "<td><strong>" + escapeHtml(entry.name) + "</strong></td>" +
                 "<td>" + escapeHtml(entry.email) + "</td>" +
                 '<td><span class="pill ' + (attendingRow ? "yes" : "no") + '">' + (attendingRow ? "Yes" : "No") + "</span></td>" +
-                "<td>" + (attendingRow ? (entry.guests || 0) : "0") + "</td>" +
+                "<td>" + (attendingRow ? (parseInt(entry.guests, 10) || 0) : "0") + "</td>" +
                 '<td style="text-transform:capitalize">' + (attendingRow ? escapeHtml(entry.diet) : "—") + "</td>" +
                 '<td class="wish-cell">' + (escapeHtml(entry.wishes) || "—") + "</td>" +
                 "<td>" + escapeHtml(entry.timestamp || "") + "</td>" +
@@ -906,8 +1116,198 @@
         }).join("");
     }
 
+    // ---- Export: Excel (.xlsx) — built-in writer, no libraries ----
+    // Produces a genuine Office Open XML workbook: a ZIP archive (STORE
+    // method, no compression needed) holding the minimal part set. Text
+    // goes in as inline strings, so guest-typed content can never be
+    // interpreted as a formula.
+    const XlsxWriter = (() => {
+        const te = new TextEncoder();
+
+        const CRC_TABLE = (() => {
+            const t = new Uint32Array(256);
+            for (let n = 0; n < 256; n++) {
+                let c = n;
+                for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+                t[n] = c >>> 0;
+            }
+            return t;
+        })();
+
+        function crc32(bytes) {
+            let c = 0xFFFFFFFF;
+            for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+            return (c ^ 0xFFFFFFFF) >>> 0;
+        }
+
+        function zip(files) {
+            const chunks = [];
+            const central = [];
+            let offset = 0;
+            const now = new Date();
+            const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+            const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+
+            files.forEach(f => {
+                const nameBytes = te.encode(f.name);
+                const data = te.encode(f.text);
+                const crc = crc32(data);
+
+                const local = new DataView(new ArrayBuffer(30));
+                local.setUint32(0, 0x04034b50, true);  // local file header
+                local.setUint16(4, 20, true);          // version needed
+                local.setUint16(6, 0x0800, true);      // UTF-8 names
+                local.setUint16(8, 0, true);           // method: store
+                local.setUint16(10, dosTime, true);
+                local.setUint16(12, dosDate, true);
+                local.setUint32(14, crc, true);
+                local.setUint32(18, data.length, true);
+                local.setUint32(22, data.length, true);
+                local.setUint16(26, nameBytes.length, true);
+                local.setUint16(28, 0, true);
+                chunks.push(new Uint8Array(local.buffer), nameBytes, data);
+
+                const cd = new DataView(new ArrayBuffer(46));
+                cd.setUint32(0, 0x02014b50, true);     // central directory
+                cd.setUint16(4, 20, true);
+                cd.setUint16(6, 20, true);
+                cd.setUint16(8, 0x0800, true);
+                cd.setUint16(10, 0, true);
+                cd.setUint16(12, dosTime, true);
+                cd.setUint16(14, dosDate, true);
+                cd.setUint32(16, crc, true);
+                cd.setUint32(20, data.length, true);
+                cd.setUint32(24, data.length, true);
+                cd.setUint16(28, nameBytes.length, true);
+                cd.setUint32(42, offset, true);
+                central.push(new Uint8Array(cd.buffer), nameBytes);
+
+                offset += 30 + nameBytes.length + data.length;
+            });
+
+            let centralSize = 0;
+            central.forEach(c => { centralSize += c.length; });
+            const eocd = new DataView(new ArrayBuffer(22));
+            eocd.setUint32(0, 0x06054b50, true);       // end of central dir
+            eocd.setUint16(8, files.length, true);
+            eocd.setUint16(10, files.length, true);
+            eocd.setUint32(12, centralSize, true);
+            eocd.setUint32(16, offset, true);
+            chunks.push(...central, new Uint8Array(eocd.buffer));
+
+            return new Blob(chunks, { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        }
+
+        const xmlEscape = (s) => String(s == null ? "" : s)
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, ""); // illegal in XML 1.0
+
+        function colRef(i) { // 0 → "A", 26 → "AA"
+            let ref = "";
+            for (i += 1; i > 0;) {
+                const m = (i - 1) % 26;
+                ref = String.fromCharCode(65 + m) + ref;
+                i = (i - m - 1) / 26;
+            }
+            return ref;
+        }
+
+        // headers: string[] · rows: (string|number)[][] · widths: number[]
+        function build(sheetName, headers, rows, widths) {
+            const cell = (rowIdx, colIdx, value, styleId) => {
+                const ref = colRef(colIdx) + (rowIdx + 1);
+                const s = styleId ? ' s="' + styleId + '"' : "";
+                if (typeof value === "number" && isFinite(value)) {
+                    return '<c r="' + ref + '"' + s + "><v>" + value + "</v></c>";
+                }
+                return '<c r="' + ref + '"' + s + ' t="inlineStr"><is><t xml:space="preserve">' + xmlEscape(value) + "</t></is></c>";
+            };
+
+            let sheetRows = '<row r="1">' + headers.map((h, c) => cell(0, c, h, 1)).join("") + "</row>";
+            rows.forEach((row, ri) => {
+                sheetRows += '<row r="' + (ri + 2) + '">' + row.map((v, c) => cell(ri + 1, c, v, 0)).join("") + "</row>";
+            });
+            const cols = widths.map((w, i) =>
+                '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>').join("");
+
+            const XML_HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+            return zip([
+                {
+                    name: "[Content_Types].xml",
+                    text: XML_HEAD +
+                        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+                        '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+                        '<Default Extension="xml" ContentType="application/xml"/>' +
+                        '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+                        '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
+                        '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' +
+                        "</Types>"
+                },
+                {
+                    name: "_rels/.rels",
+                    text: XML_HEAD +
+                        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+                        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' +
+                        "</Relationships>"
+                },
+                {
+                    name: "xl/workbook.xml",
+                    text: XML_HEAD +
+                        '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+                        '<sheets><sheet name="' + xmlEscape(sheetName) + '" sheetId="1" r:id="rId1"/></sheets>' +
+                        "</workbook>"
+                },
+                {
+                    name: "xl/_rels/workbook.xml.rels",
+                    text: XML_HEAD +
+                        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+                        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' +
+                        '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+                        "</Relationships>"
+                },
+                {
+                    name: "xl/styles.xml",
+                    text: XML_HEAD +
+                        '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+                        '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>' +
+                        '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>' +
+                        '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+                        '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+                        '<cellXfs count="2">' +
+                        '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+                        '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>' +
+                        "</cellXfs>" +
+                        '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
+                        "</styleSheet>"
+                },
+                {
+                    name: "xl/worksheets/sheet1.xml",
+                    text: XML_HEAD +
+                        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+                        '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
+                        "<cols>" + cols + "</cols>" +
+                        "<sheetData>" + sheetRows + "</sheetData>" +
+                        "</worksheet>"
+                }
+            ]);
+        }
+
+        return { build };
+    })();
+
+    $("#export-xlsx-btn").addEventListener("click", () => {
+        const blob = XlsxWriter.build(
+            "Guest List",
+            ADMIN_COLUMNS,
+            adminData.map(adminRow),
+            [24, 30, 11, 9, 20, 48, 20]
+        );
+        downloadBlob(blob, "wedding_guest_list.xlsx");
+    });
+
+    // ---- Export: CSV ----
     $("#export-csv-btn").addEventListener("click", () => {
-        const list = getRSVPs();
         const quote = (v) => {
             let s = String(v == null ? "" : v).replace(/"/g, '""').replace(/\r?\n/g, " ");
             // guests type their own names/wishes: neutralise spreadsheet
@@ -915,30 +1315,17 @@
             if (/^[=+\-@]/.test(s)) s = "'" + s;
             return '"' + s + '"';
         };
-        let csv = "\uFEFFGuest Name,Email,Attending,Guests,Dietary Preference,Wishes,Timestamp\r\n";
-        list.forEach(r => {
-            const attendingRow = r.attendance === "attending";
-            csv += [
-                quote(r.name), quote(r.email),
-                attendingRow ? "Yes" : "No",
-                attendingRow ? (r.guests || 0) : 0,
-                attendingRow ? quote(r.diet) : "N/A",
-                quote(r.wishes), quote(r.timestamp)
-            ].join(",") + "\r\n";
+        let csv = "\uFEFF" + ADMIN_COLUMNS.join(",") + "\r\n";
+        adminData.forEach(r => {
+            csv += adminRow(r).map(v => (typeof v === "number" ? v : quote(v))).join(",") + "\r\n";
         });
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "wedding_rsvp_list.csv";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8;" }), "wedding_guest_list.csv");
     });
 
-    $("#clear-rsvps-btn").addEventListener("click", () => {
-        if (confirm("Delete all RSVP entries? This cannot be undone.")) {
+    clearBtn.addEventListener("click", () => {
+        if (confirm("Delete all RSVP entries stored on this device? This cannot be undone.")) {
             saveRSVPs(DEFAULT_WISHES);
-            renderAdmin();
+            renderAdmin(getRSVPs(), "local");
             renderWishes();
         }
     });

@@ -399,7 +399,7 @@
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
-                    <p class="rsvp-form-hint" data-reveal>Responses are saved on this device<span
+                    <p class="rsvp-form-hint" id="rsvp-form-hint" data-reveal>Responses are saved on this device<span
                             id="webhook-hint"></span>.</p>
                 </form>
             </div>
@@ -479,36 +479,62 @@
                 </svg>
             </button>
             <h2 id="admin-modal-title">Guest list</h2>
-            <div class="admin-stats" id="admin-stats">
-                <!-- populated by script -->
-            </div>
-            <div class="admin-actions">
-                <button type="button" class="text-btn" id="export-csv-btn">Export CSV<svg viewBox="0 0 24 24"
-                        aria-hidden="true">
-                        <path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg></button>
-                <button type="button" class="text-btn danger" id="clear-rsvps-btn">Clear all<svg viewBox="0 0 24 24"
-                        aria-hidden="true">
-                        <path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13" fill="none" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg></button>
-            </div>
-            <div class="table-scroll">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Guest</th>
-                            <th>Email</th>
-                            <th>Attending</th>
-                            <th>Guests</th>
-                            <th>Dietary</th>
-                            <th>Wishes</th>
-                            <th>When</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rsvp-table-body"></tbody>
-                </table>
+
+            <!-- LOCK SCREEN — shown until the passcode is verified -->
+            <form id="admin-lock" class="admin-lock" novalidate>
+                <p class="admin-lock-text">This dashboard is private.<br>Enter the passcode to view the guest list.</p>
+                <div class="admin-lock-row">
+                    <input type="password" id="admin-passcode" class="admin-passcode-input" data-autofocus
+                        autocomplete="current-password" placeholder="Passcode" aria-label="Passcode" required>
+                    <button type="submit" class="modal-btn admin-unlock-btn" id="admin-unlock-btn">Unlock</button>
+                </div>
+                <p class="admin-lock-error" id="admin-lock-error" role="alert" hidden></p>
+            </form>
+
+            <!-- DASHBOARD — revealed after unlock -->
+            <div id="admin-dashboard" hidden>
+                <p class="admin-source" id="admin-source"></p>
+                <div class="admin-stats" id="admin-stats">
+                    <!-- populated by script -->
+                </div>
+                <div class="admin-actions">
+                    <button type="button" class="text-btn" id="admin-refresh-btn" hidden>Refresh<svg
+                            viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></button>
+                    <button type="button" class="text-btn" id="export-xlsx-btn">Export Excel<svg viewBox="0 0 24 24"
+                            aria-hidden="true">
+                            <path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></button>
+                    <button type="button" class="text-btn" id="export-csv-btn">Export CSV<svg viewBox="0 0 24 24"
+                            aria-hidden="true">
+                            <path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></button>
+                    <button type="button" class="text-btn danger" id="clear-rsvps-btn">Clear all<svg
+                            viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg></button>
+                </div>
+                <div class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Guest</th>
+                                <th>Email</th>
+                                <th>Attending</th>
+                                <th>Guests</th>
+                                <th>Dietary</th>
+                                <th>Wishes</th>
+                                <th>When</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rsvp-table-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
