@@ -25,7 +25,7 @@ const WEDDING_CONFIG = {
     //   • the dashboard shows live data from the Sheet, with built-in
     //     Export to Excel (.xlsx) and CSV.
     // Leave blank to run in local-only demo mode (see adminPasscode below).
-    backendUrl: "",
+    backendUrl: "https://script.google.com/macros/s/AKfycby7_YWwruAx5qCM_Rnk5eXGoSsw5WrneCKo6fqw2H0Fi4qZs4pINxG0r-X6Nk5Ytwlq/exec",
 
     // Passcode for the DEMO (local-only) dashboard, used ONLY while
     // backendUrl above is blank. In that mode the code is checked in the
