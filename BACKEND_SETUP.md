@@ -86,8 +86,14 @@ Commit / upload the change to wherever the site is hosted. Done.
   `.xlsx` workbook (bold frozen header row, sized columns) generated right
   in the browser — no add-ins or libraries needed. CSV is also available.
 - **Editing/removing entries:** edit rows directly in the Google Sheet —
-  it is the source of truth. (The dashboard's *Clear all* button only
-  exists in local demo mode.)
+  it is the source of truth.
+- **Clearing the whole list:** the dashboard's **Clear guest list** button
+  deletes every RSVP from the Sheet. It is passcode-protected: you must
+  re-enter the access passcode to confirm, and the check happens on
+  Google's servers (same as unlocking). If you ever clear by mistake,
+  the Sheet's **File → Version history** can restore the data.
+  *(Deployed the backend before this feature existed? Paste the latest
+  `Code.gs` over the old one and publish a new version — see below.)*
 - **Changing the passcode:** edit `ADMIN_PASSCODE` in the Apps Script, then
   **Deploy → Manage deployments → ✏️ → Version: New version → Deploy**.
   (Any edit to the script needs that "new version" step to go live.)

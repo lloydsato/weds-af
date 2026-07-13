@@ -46,6 +46,7 @@ function doPost(e) {
   switch (String(body.action || "")) {
     case "rsvp": return handleRsvp_(body);
     case "list": return handleList_(body);
+    case "clear": return handleClear_(body);
     default: return json_({ ok: false, error: "unknown_action" });
   }
 }
@@ -102,6 +103,26 @@ function handleList_(body) {
     };
   });
   return json_({ ok: true, entries: entries });
+}
+
+// ---- private: the couple wipes the guest list (passcode required) ----
+// Deletes every RSVP row from the Sheet, keeping the header. Irreversible
+// from the website — though Google Sheets' own File → Version history can
+// still recover the data if this is ever pressed by mistake.
+function handleClear_(body) {
+  if (!passcodeOk_(body.passcode)) {
+    return json_({ ok: false, error: "unauthorized" });
+  }
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var sheet = getSheet_();
+    var lastRow = sheet.getLastRow();
+    if (lastRow > 1) sheet.deleteRows(2, lastRow - 1);
+  } finally {
+    lock.releaseLock();
+  }
+  return json_({ ok: true });
 }
 
 // ------------------------------------------------------------------
