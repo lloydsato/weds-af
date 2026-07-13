@@ -174,47 +174,6 @@
     }
 
     // ============================================================
-    // PERSONALIZATION (?to= invite links)
-    // ============================================================
-    // A link like  ?to=Priya%20%26%20family  greets that guest by name in
-    // the hero and the invitation, and pre-fills the RSVP name field.
-    function personalGuestName() {
-        let raw = "";
-        try {
-            const params = new URLSearchParams(location.search);
-            raw = params.get("to") || params.get("guest") || "";
-        } catch (e) {
-            return "";
-        }
-        const name = raw.replace(/\s+/g, " ").trim();
-        // accept only name-like values: reject anything long, containing
-        // markup/URL characters, or control characters — the value is always
-        // inserted via textContent, this simply keeps nonsense off the page
-        if (!name || name.length > 50) return "";
-        if (/[\u0000-\u001f\u007f<>\\/{}()[\]=`"“”;:@#%^*_+|~]/.test(name)) return "";
-        if (/https?:|www\./i.test(name)) return "";
-        return name;
-    }
-
-    function applyPersonalization() {
-        const name = personalGuestName();
-        if (!name) return;
-
-        const heroLine = $("#hero-personal");
-        if (heroLine) {
-            heroLine.textContent = "An invitation for " + name;
-            heroLine.hidden = false;
-        }
-        const greeting = $("#invitation-greeting");
-        if (greeting) {
-            greeting.textContent = "Dear " + name + ",";
-            greeting.hidden = false;
-        }
-        const nameInput = $("#guest-name");
-        if (nameInput && !nameInput.value) nameInput.value = name;
-    }
-
-    // ============================================================
     // THREE.JS — FLOWING SILK + CHAMPAGNE DUST
     // ============================================================
     const Silk = (() => {
@@ -1447,121 +1406,6 @@
     });
 
     // ============================================================
-    // SHARE INVITATION + PERSONAL LINKS
-    // ============================================================
-    function siteUrl() {
-        // clean address: drops any ?to= of the current visitor
-        return location.origin + location.pathname;
-    }
-
-    function shareMessage() {
-        return "You are invited to the wedding of " +
-            (config.groomName || "Maschio") + " & " + (config.brideName || "Ann Sweety") +
-            " — " + (config.weddingDateText || "September 24, 2026") + ", New Delhi.";
-    }
-
-    function copyText(text) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            return navigator.clipboard.writeText(text);
-        }
-        // legacy fallback: off-screen textarea + execCommand
-        return new Promise((resolve, reject) => {
-            const ta = document.createElement("textarea");
-            ta.value = text;
-            ta.setAttribute("readonly", "");
-            ta.style.position = "fixed";
-            ta.style.opacity = "0";
-            document.body.appendChild(ta);
-            ta.select();
-            let ok = false;
-            try { ok = document.execCommand("copy"); } catch (err) { /* noop */ }
-            ta.remove();
-            if (ok) resolve(); else reject(new Error("copy_failed"));
-        });
-    }
-
-    function flashLabel(el, message) {
-        if (!el) return;
-        if (el.__label === undefined) el.__label = el.textContent;
-        el.textContent = message;
-        clearTimeout(el.__labelTimer);
-        el.__labelTimer = setTimeout(() => { el.textContent = el.__label; }, 2000);
-    }
-
-    function initShare() {
-        const trigger = $("#share-trigger");
-        const popover = $("#share-popover");
-        if (!trigger) return;
-        trigger.hidden = false;
-
-        const whatsapp = $("#share-whatsapp");
-        if (whatsapp) {
-            whatsapp.href = "https://wa.me/?text=" + encodeURIComponent(shareMessage() + " " + siteUrl());
-        }
-
-        function setPopover(open) {
-            if (!popover) return;
-            popover.hidden = !open;
-            trigger.setAttribute("aria-expanded", open ? "true" : "false");
-        }
-
-        trigger.addEventListener("click", () => {
-            if (navigator.share) {
-                navigator.share({
-                    title: document.title,
-                    text: shareMessage(),
-                    url: siteUrl()
-                }).catch(() => { /* guest dismissed the share sheet */ });
-                return;
-            }
-            setPopover(popover && popover.hidden);
-        });
-
-        const copyBtn = $("#share-copy");
-        if (copyBtn) {
-            copyBtn.addEventListener("click", () => {
-                copyText(siteUrl()).then(
-                    () => flashLabel($("#share-copy-label"), "Link copied"),
-                    () => flashLabel($("#share-copy-label"), "Copy failed")
-                );
-            });
-        }
-        if (whatsapp) whatsapp.addEventListener("click", () => setPopover(false));
-
-        document.addEventListener("click", (e) => {
-            if (!popover || popover.hidden) return;
-            if (!(e.target instanceof Element) || !e.target.closest(".share-wrap")) setPopover(false);
-        });
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") setPopover(false);
-        });
-    }
-
-    // personal ?to= link builder inside the admin dashboard
-    function initInviteLinks() {
-        const form = $("#admin-invite-link");
-        if (!form) return;
-        const input = $("#invite-guest-name");
-        const btn = $("#invite-copy-btn");
-        const preview = $("#invite-link-preview");
-
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const name = (input.value || "").replace(/\s+/g, " ").trim();
-            if (!name) {
-                input.focus();
-                return;
-            }
-            const link = siteUrl() + "?to=" + encodeURIComponent(name);
-            if (preview) preview.textContent = link;
-            copyText(link).then(
-                () => flashLabel(btn, "Copied ✓"),
-                () => flashLabel(btn, "Copy failed")
-            );
-        });
-    }
-
-    // ============================================================
     // NAV + FULLSCREEN MENU
     // ============================================================
     const nav = $("#site-nav");
@@ -1856,12 +1700,9 @@
     // BOOT
     // ============================================================
     populateContent();
-    applyPersonalization();
     buildHero();
     renderWishes();
     initCountdown();
-    initShare();
-    initInviteLinks();
     initReveals();
     initGallery();
     initCursor();
