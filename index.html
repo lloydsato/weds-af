@@ -513,12 +513,27 @@
                             <path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14" fill="none" stroke="currentColor"
                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg></button>
-                    <button type="button" class="text-btn danger" id="clear-rsvps-btn">Clear all<svg
+                    <button type="button" class="text-btn danger" id="clear-rsvps-btn">Clear guest list<svg
                             viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M5 7h14M9 7V5h6v2m-8 0l1 13h8l1-13" fill="none" stroke="currentColor"
                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg></button>
                 </div>
+
+                <!-- CLEAR CONFIRMATION — deleting requires re-entering the passcode -->
+                <form class="admin-clear-confirm" id="admin-clear-confirm" novalidate hidden>
+                    <p class="admin-clear-text">This permanently deletes every RSVP in the guest list.
+                        Re-enter the passcode to confirm.</p>
+                    <div class="admin-lock-row">
+                        <input type="password" id="admin-clear-passcode" class="admin-passcode-input"
+                            autocomplete="current-password" placeholder="Passcode"
+                            aria-label="Passcode to confirm clearing the guest list" required>
+                        <button type="submit" class="modal-btn admin-clear-delete-btn"
+                            id="admin-clear-delete-btn">Delete</button>
+                        <button type="button" class="text-btn" id="admin-clear-cancel-btn">Cancel</button>
+                    </div>
+                    <p class="admin-lock-error" id="admin-clear-error" role="alert" hidden></p>
+                </form>
                 <div class="table-scroll">
                     <table class="admin-table">
                         <thead>

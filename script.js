@@ -959,6 +959,7 @@
     let adminUnlocked = false;   // survives modal close, resets on page reload
     let adminKey = "";           // passcode kept in memory only, for refreshes
     let adminData = [];          // the rows currently shown (drives exports)
+    let adminDataSource = "local"; // "server" or "local" — set by renderAdmin
 
     const ADMIN_COLUMNS = ["Guest Name", "Email", "Attending", "Guests", "Dietary Preference", "Wishes", "Timestamp"];
 
@@ -991,11 +992,13 @@
         adminDashboard.hidden = true;
         adminLockError.hidden = true;
         adminPasscodeInput.value = "";
+        hideClearConfirm();
     }
 
     function showAdminDashboard() {
         adminLockForm.hidden = true;
         adminDashboard.hidden = false;
+        hideClearConfirm();
     }
 
     function setLockBusy(busy) {
@@ -1078,14 +1081,12 @@
             adminSource.textContent = "Live · synced from your Google Sheet";
             adminSource.classList.add("live");
             adminRefreshBtn.hidden = false;
-            // the Sheet is the source of truth; delete rows there instead
-            clearBtn.hidden = true;
         } else {
             adminSource.textContent = "This device only — see BACKEND_SETUP.md for the full guest list";
             adminSource.classList.remove("live");
             adminRefreshBtn.hidden = true;
-            clearBtn.hidden = false;
         }
+        adminDataSource = source;
 
         const attending = adminData.filter(r => r.attendance === "attending");
         const totalGuests = attending.reduce((sum, r) => sum + (parseInt(r.guests, 10) || 0), 0);
@@ -1322,12 +1323,86 @@
         downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8;" }), "wedding_guest_list.csv");
     });
 
+    // ---- Clear guest list (passcode-protected) ----
+    // The button only reveals a confirmation panel; nothing is deleted
+    // until the access passcode is typed again. In backend mode the code
+    // travels with the "clear" action and is verified on Google's servers
+    // (same check as unlocking); in local demo mode it is checked against
+    // config.adminPasscode, like the lock screen.
+    const clearConfirm = $("#admin-clear-confirm");
+    const clearPasscodeInput = $("#admin-clear-passcode");
+    const clearDeleteBtn = $("#admin-clear-delete-btn");
+    const clearErrorEl = $("#admin-clear-error");
+
+    function hideClearConfirm() {
+        clearConfirm.hidden = true;
+        clearPasscodeInput.value = "";
+        clearErrorEl.hidden = true;
+        setClearBusy(false);
+    }
+
+    function setClearBusy(busy) {
+        clearDeleteBtn.disabled = busy;
+        clearDeleteBtn.textContent = busy ? "Deleting…" : "Delete";
+    }
+
+    function clearFail(message) {
+        clearErrorEl.textContent = message;
+        clearErrorEl.hidden = false;
+        clearPasscodeInput.select();
+    }
+
     clearBtn.addEventListener("click", () => {
-        if (confirm("Delete all RSVP entries stored on this device? This cannot be undone.")) {
-            saveRSVPs(DEFAULT_WISHES);
-            renderAdmin(getRSVPs(), "local");
-            renderWishes();
+        if (clearConfirm.hidden) {
+            clearConfirm.hidden = false;
+            clearPasscodeInput.focus();
+        } else {
+            hideClearConfirm();
         }
+    });
+
+    $("#admin-clear-cancel-btn").addEventListener("click", hideClearConfirm);
+
+    clearConfirm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const code = clearPasscodeInput.value;
+        if (!code) {
+            clearFail("Please enter the passcode.");
+            return;
+        }
+
+        if (adminDataSource !== "server") {
+            // local demo mode: same client-side check as the lock screen
+            if (code === (config.adminPasscode || "2026")) {
+                saveRSVPs(DEFAULT_WISHES);
+                hideClearConfirm();
+                renderAdmin(getRSVPs(), "local");
+                renderWishes();
+            } else {
+                clearFail("Incorrect passcode.");
+            }
+            return;
+        }
+
+        setClearBusy(true);
+        backendPost({ action: "clear", passcode: code })
+            .then(data => {
+                setClearBusy(false);
+                if (data && data.ok) {
+                    hideClearConfirm();
+                    renderAdmin([], "server");
+                } else if (data && data.error === "unauthorized") {
+                    clearFail("Incorrect passcode.");
+                } else if (data && data.error === "unknown_action") {
+                    clearFail("The backend doesn't support clearing yet — redeploy the latest Code.gs (see BACKEND_SETUP.md).");
+                } else {
+                    clearFail("The guest-list service returned an error. Please try again.");
+                }
+            })
+            .catch(() => {
+                setClearBusy(false);
+                clearFail("Couldn't reach the guest-list service. Check your connection and try again.");
+            });
     });
 
     // ============================================================
