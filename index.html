@@ -23,23 +23,19 @@
     <link rel="icon"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%8D%3C/text%3E%3C/svg%3E">
 
-    <!-- Open Graph / Social Share Preview.
-         Crawlers (WhatsApp, iMessage, Facebook) never run JavaScript, so
-         these must be static, absolute URLs pointing at the live site. -->
-    <link rel="canonical" href="https://lloydsato.github.io/weds-af/">
+    <!-- Open Graph / Social Share Preview -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://lloydsato.github.io/weds-af/">
     <meta property="og:title" content="Maschio &amp; Ann Sweety — Wedding Invitation">
     <meta property="og:description"
         content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
-    <meta property="og:image" content="https://lloydsato.github.io/weds-af/images/shining-star-01.jpg">
-    <meta property="og:image:width" content="1152">
-    <meta property="og:image:height" content="2048">
+    <meta property="og:image"
+        content="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Maschio &amp; Ann Sweety — Wedding Invitation">
     <meta name="twitter:description"
         content="You are joyfully invited to celebrate the wedding of Maschio Silvester and Ann Sweety Saju on September 24, 2026, at the Cathedral Church of The Redemption, New Delhi.">
-    <meta name="twitter:image" content="https://lloydsato.github.io/weds-af/images/shining-star-01.jpg">
+    <meta name="twitter:image"
+        content="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop">
 
     <!-- Wedding content configuration -->
     <script src="config.js"></script>
@@ -136,8 +132,6 @@
                     <span class="meta-dot" aria-hidden="true"></span>
                     <span>New Delhi</span>
                 </div>
-                <!-- Filled from the ?to= URL parameter (personalized invite links) -->
-                <p class="hero-personal reveal-hero" id="hero-personal" hidden></p>
             </div>
             <div class="hero-scroll-cue reveal-hero" aria-hidden="true">
                 <span class="cue-label">Scroll</span>
@@ -166,8 +160,6 @@
                     </h2>
                 </div>
                 <div class="invitation-copy">
-                    <!-- Filled from the ?to= URL parameter (personalized invite links) -->
-                    <p class="invitation-greeting" id="invitation-greeting" data-reveal hidden></p>
                     <p class="lead" data-reveal data-bind="cardInviteMsg">You are cordially invited to share in our
                         joy.</p>
                     <div class="parents" data-reveal>
@@ -435,27 +427,7 @@
         <p class="footer-meta"><span data-bind="weddingDateText">September 24, 2026</span> · New Delhi, India</p>
         <div class="footer-bottom">
             <p>Made with love</p>
-            <div class="footer-actions">
-                <div class="share-wrap">
-                    <button type="button" class="admin-trigger" id="share-trigger" aria-haspopup="true"
-                        aria-expanded="false" aria-controls="share-popover" hidden>Share invitation</button>
-                    <!-- Fallback popover for browsers without the native share sheet -->
-                    <div class="share-popover" id="share-popover" role="group" aria-label="Share options" hidden>
-                        <a class="text-btn" id="share-whatsapp" href="#" target="_blank"
-                            rel="noopener noreferrer">WhatsApp<svg viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M7 17L17 7M17 7H8M17 7v9" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg></a>
-                        <button type="button" class="text-btn" id="share-copy"><span
-                                id="share-copy-label">Copy link</span><svg viewBox="0 0 24 24"
-                                aria-hidden="true">
-                                <path d="M9 9h10v10H9zM5 15V5h10" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg></button>
-                    </div>
-                </div>
-                <button type="button" class="admin-trigger" id="admin-trigger">Guest list</button>
-            </div>
+            <button type="button" class="admin-trigger" id="admin-trigger">Guest list</button>
         </div>
     </footer>
 
@@ -562,20 +534,6 @@
                     </div>
                     <p class="admin-lock-error" id="admin-clear-error" role="alert" hidden></p>
                 </form>
-
-                <!-- PERSONAL INVITATION LINKS — builds ?to= links to send to guests -->
-                <form class="admin-invite-link" id="admin-invite-link" novalidate>
-                    <p class="admin-invite-text">Personal invitation links — enter a guest's name to copy a link
-                        that greets them by name and pre-fills their RSVP.</p>
-                    <div class="admin-lock-row">
-                        <input type="text" id="invite-guest-name" class="admin-passcode-input"
-                            autocomplete="off" placeholder="Guest name — e.g. Priya &amp; family"
-                            aria-label="Guest name for the personal link">
-                        <button type="submit" class="modal-btn" id="invite-copy-btn">Copy link</button>
-                    </div>
-                    <p class="admin-invite-preview" id="invite-link-preview" aria-live="polite"></p>
-                </form>
-
                 <div class="table-scroll">
                     <table class="admin-table">
                         <thead>
