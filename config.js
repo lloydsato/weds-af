@@ -15,17 +15,28 @@ const WEDDING_CONFIG = {
     // times used for display and the calendar file.)
     countdownTarget: "2026-09-24T16:00:00+05:30",
 
-    // Passcode for the "Guest list" dashboard link in the footer.
-    // NOTE: this is a static site with no backend, so this code is only ever
-    // checked in the guest's own browser and is visible to anyone who views
-    // the page source. Treat it as a light deterrent, not real security.
+    // --- GUEST LIST BACKEND (recommended — see BACKEND_SETUP.md) ---
+    // URL of your Google Apps Script web app (ends in "/exec"). When set:
+    //   • every RSVP is delivered to your private Google Sheet, from ANY
+    //     guest's device — this becomes the real, shared guest list;
+    //   • the "Guest list" dashboard (footer) asks for the passcode you set
+    //     inside the Apps Script, and the check happens on Google's servers.
+    //     That passcode is NOT in this file and NOT visible in page source;
+    //   • the dashboard shows live data from the Sheet, with built-in
+    //     Export to Excel (.xlsx) and CSV.
+    // Leave blank to run in local-only demo mode (see adminPasscode below).
+    backendUrl: "",
+
+    // Passcode for the DEMO (local-only) dashboard, used ONLY while
+    // backendUrl above is blank. In that mode the code is checked in the
+    // guest's own browser and is visible to anyone who views the page
+    // source — treat it as a light deterrent, not real security. Once
+    // backendUrl is set, this value is ignored entirely.
     adminPasscode: "2026",
 
-    // Optional: paste a form-backend endpoint (e.g. Formspree, Getform, a
-    // Google Apps Script webhook) here to also deliver each RSVP off of the
-    // guest's device. Without this, RSVPs only save to that guest's own
-    // browser (localStorage) and never reach the couple. Leave blank to
-    // disable.
+    // Optional extra: a generic form-backend endpoint (e.g. Formspree,
+    // Getform) that receives a JSON copy of each RSVP — handy for email
+    // notifications. Independent of backendUrl. Leave blank to disable.
     rsvpWebhookUrl: "",
 
     events: {
