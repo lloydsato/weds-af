@@ -21,7 +21,7 @@
 
 // ⚠️ CHANGE THIS. It is the passcode for the guest-list dashboard.
 // It lives only in your Google account — website visitors cannot see it.
-var ADMIN_PASSCODE = "change-me-please";
+var ADMIN_PASSCODE = "2026annwedsmaschio";
 
 var SHEET_NAME = "RSVPs";
 var HEADERS = ["Timestamp", "Name", "Email", "Attendance", "Guests", "Diet", "Wishes"];
